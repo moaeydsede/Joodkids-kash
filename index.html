@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b1220" />
+  <title>Cash & Wallet Manager VIP</title>
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" href="./assets/icon-192.png" />
+  <link rel="apple-touch-icon" href="./assets/icon-192.png" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">💳</div>
+        <div class="titles">
+          <div class="title" id="appTitle">Cash & Wallet Manager VIP</div>
+          <div class="subtitle">موبايل • أرصدة + عمليات • GitHub Pages</div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn ghost" id="btnRefresh" type="button">تحديث</button>
+        <button class="btn" id="btnAddTop" type="button">+ عملية</button>
+        <button class="btn ghost" id="btnPrint" type="button">طباعة</button>
+        <button class="btn danger" id="btnLogout" type="button">خروج</button>
+      </div>
+    </header>
+
+    <main class="content">
+      <!-- LOGIN -->
+      <section class="card" id="loginCard">
+        <div class="cardHead">
+          <h2>تسجيل الدخول</h2>
+          <span class="badge">VIP</span>
+        </div>
+
+        <div class="grid2">
+          <div class="field">
+            <label>اسم المستخدم</label>
+            <input id="u" placeholder="مثال: Admin" autocomplete="username" />
+          </div>
+          <div class="field">
+            <label>كلمة المرور</label>
+            <input id="p" type="password" placeholder="مثال: 12345" autocomplete="current-password" />
+          </div>
+        </div>
+
+        <div class="row">
+          <button class="btn primary" id="btnLogin" type="button">دخول</button>
+          <div class="hint" id="loginMsg"></div>
+        </div>
+
+        <div class="note">
+          <strong>ملاحظة:</strong> التطبيق Static على GitHub Pages، والكتابة على Google Sheet تتم عبر API (Apps Script Web App).
+        </div>
+      </section>
+
+      <!-- APP -->
+      <section class="stack" id="appArea" style="display:none;">
+
+        <!-- TOP SUMMARY (balances quick cards) -->
+        <section class="card">
+          <div class="row between">
+            <div>
+              <div class="kpiLabel">إجمالي الرصيد الحالي</div>
+              <div class="kpiValue" id="grand">0</div>
+              <div class="kpiSub" id="todayLabel"></div>
+            </div>
+            <div class="miniKpis">
+              <div class="miniBox">
+                <div class="miniLabel">مقبوضات (الفترة)</div>
+                <div class="miniVal" id="rangeRec">0</div>
+              </div>
+              <div class="miniBox">
+                <div class="miniLabel">مدفوعات (الفترة)</div>
+                <div class="miniVal" id="rangePay">0</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="walletStrip" id="walletStrip"></div>
+        </section>
+
+        <!-- NAV TABS -->
+        <section class="tabs">
+          <button class="tab active" id="tabBalances" type="button">الأرصدة</button>
+          <button class="tab" id="tabTxns" type="button">العمليات</button>
+        </section>
+
+        <!-- BALANCES VIEW -->
+        <section class="card" id="viewBalances">
+          <div class="row between">
+            <h2>الأرصدة</h2>
+            <div class="row">
+              <span class="chip" id="chipUpdated"></span>
+            </div>
+          </div>
+
+          <div class="walletGrid" id="walletGrid"></div>
+
+          <div class="note">
+            تريد تعديل الرصيد مباشرة؟ الأفضل يتم عبر إضافة عمليات (مقبوض/مدفوع) ليحسب الرصيد تلقائيًا.
+          </div>
+        </section>
+
+        <!-- TXNS VIEW -->
+        <section class="card" id="viewTxns" style="display:none;">
+          <div class="row between">
+            <h2>تصفية العمليات</h2>
+            <button class="btn" id="btnResetFilters" type="button">إعادة ضبط</button>
+          </div>
+
+          <div class="filters">
+            <div class="field">
+              <label>الحساب</label>
+              <select id="walletPick"></select>
+            </div>
+
+            <div class="field">
+              <label>اليوم (سريع)</label>
+              <input type="date" id="datePick" />
+            </div>
+
+            <div class="field">
+              <label>من تاريخ</label>
+              <input type="date" id="fromPick" />
+            </div>
+
+            <div class="field">
+              <label>إلى تاريخ</label>
+              <input type="date" id="toPick" />
+            </div>
+
+            <div class="field" style="grid-column: 1/-1;">
+              <label>بحث داخل الوصف/المرجع</label>
+              <input id="q" placeholder="مثال: شحن / INV-102 / تحويل" />
+            </div>
+          </div>
+
+          <div class="row">
+            <button class="btn primary" id="btnApply" type="button">عرض</button>
+            <div class="hint" id="statusMsg"></div>
+          </div>
+
+          <div class="row between" style="margin-top:14px;">
+            <div class="row">
+              <span class="chip" id="chipRange"></span>
+              <span class="chip" id="chipWallet"></span>
+            </div>
+            <div class="row">
+              <button class="btn" id="btnAdd" type="button">+ إضافة عملية</button>
+            </div>
+          </div>
+
+          <div class="txTotals" id="txTotals"></div>
+
+          <div class="tableWrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>التاريخ</th>
+                  <th>الحساب</th>
+                  <th>مقبوضات</th>
+                  <th>مدفوعات</th>
+                  <th>الوصف</th>
+                  <th>مرجع</th>
+                  <th>إدارة</th>
+                </tr>
+              </thead>
+              <tbody id="txBody">
+                <tr><td colspan="7" class="muted">جارِ التحميل…</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="muted" style="margin-top:10px;font-size:12px">
+            العمليات القادمة من Google Sheets تكون للعرض فقط. يمكنك إضافة/تعديل/حذف عمليات <b>محليًا</b> (على جهازك).
+          </div>
+        </section>
+
+        <footer class="foot">
+          <div class="muted">VIP • مناسب للموبايل • اسحب الجدول يمين/يسار.</div>
+        </footer>
+      </section>
+    </main>
+
+    <!-- MODAL ADD/EDIT -->
+    <div class="modal" id="modal" style="display:none;">
+      <div class="modalCard">
+        <div class="row between">
+          <h3 id="mTitle">إضافة عملية</h3>
+          <button class="btn ghost" id="btnCloseModal" type="button">إغلاق</button>
+        </div>
+
+        <div class="grid2">
+          <div class="field">
+            <label>التاريخ</label>
+            <input type="date" id="mDate">
+          </div>
+          <div class="field">
+            <label>الحساب</label>
+            <select id="mWallet"></select>
+          </div>
+          <div class="field">
+            <label>المقبوضات</label>
+            <input id="mRec" type="number" inputmode="decimal" placeholder="0">
+          </div>
+          <div class="field">
+            <label>المدفوعات</label>
+            <input id="mPay" type="number" inputmode="decimal" placeholder="0">
+          </div>
+          <div class="field" style="grid-column:1/-1;">
+            <label>الوصف</label>
+            <input id="mDesc" placeholder="مثال: تحويل / مصاريف">
+          </div>
+          <div class="field" style="grid-column:1/-1;">
+            <label>مرجع (اختياري)</label>
+            <input id="mRef" placeholder="INV-102">
+          </div>
+        </div>
+
+        <div class="row">
+          <button class="btn primary" id="btnSaveModal" type="button">حفظ</button>
+          <button class="btn danger" id="btnDeleteModal" type="button" style="display:none;">حذف</button>
+          <div class="hint" id="mMsg"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </div>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
