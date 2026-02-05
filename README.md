@@ -12,3 +12,7 @@ Settings → Pages → Source: main / root.
 ## Notes
 - No Service Worker (avoids caching problems).
 - Login uses form POST to avoid CORS preflight.
+
+
+## Build
+20260205v3
