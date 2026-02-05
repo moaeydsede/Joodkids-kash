@@ -299,7 +299,7 @@
         const account = String(r[1] || "").trim();
         let walletId = String(r[2] || "").trim();
 
-                if (!walletId && account && state.walletIdByName[account]) walletId = state.walletIdByName[account];
+        if (!walletId && account && state.walletIdByName[account]) walletId = state.walletIdByName[account];
 
         if (!walletId) continue;
 
@@ -314,7 +314,6 @@
         });
       }
 
-      }
       state.txns = txns;
 
       renderKpisGrand();
