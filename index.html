@@ -1,148 +1,0 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#0b1220" />
-  <title>Wallet Viewer VIP</title>
-  <link rel="stylesheet" href="./styles.css?v=20260205-GH-FINAL" />
-</head>
-<body>
-  <div class="app">
-    <header class="topbar">
-      <div class="brand">
-        <div class="logo">💳</div>
-        <div>
-          <div class="title">Wallet Viewer VIP</div>
-          <div class="sub">GitHub Only • Read-Only • BUILD 20260205-GH-FINAL</div>
-        </div>
-      </div>
-      <div class="actions">
-        <button class="btn ghost" id="btnRefresh" style="display:none;">تحديث</button>
-        <button class="btn danger" id="btnLogout" style="display:none;">خروج</button>
-      </div>
-    </header>
-
-    <main class="content">
-      <!-- LOGIN -->
-      <section class="card" id="loginCard">
-        <div class="row between">
-          <h2>تسجيل الدخول</h2>
-          <span class="badge">VIP</span>
-        </div>
-        <div class="grid2">
-          <div class="field">
-            <label>اسم المستخدم</label>
-            <input id="u" placeholder="admin / فرزات" autocomplete="username" />
-          </div>
-          <div class="field">
-            <label>كلمة المرور</label>
-            <input id="p" type="password" placeholder="••••••" autocomplete="current-password" />
-          </div>
-        </div>
-        <div class="row">
-          <button class="btn primary" id="btnLogin">دخول</button>
-          <div class="hint" id="loginMsg"></div>
-        </div>
-        <div class="note">
-          ✅ عرض فقط — تحديث تلقائي — فلترة حسب الحساب + التاريخ (يوم أو أكثر).
-        </div>
-      </section>
-
-      <!-- APP -->
-      <section class="stack" id="appArea" style="display:none;">
-        <section class="cards">
-          <div class="kpi">
-            <div class="kpiLabel">إجمالي الرصيد الحالي</div>
-            <div class="kpiValue" id="grand">0</div>
-            <div class="kpiSub" id="lastUpdate">آخر تحديث: —</div>
-          </div>
-          <div class="kpi mini">
-            <div class="kpiLabel">مقبوضات (حسب الفلتر)</div>
-            <div class="kpiValue" id="sumRec">0</div>
-          </div>
-          <div class="kpi mini">
-            <div class="kpiLabel">مدفوعات (حسب الفلتر)</div>
-            <div class="kpiValue" id="sumPay">0</div>
-          </div>
-          <div class="kpi mini">
-            <div class="kpiLabel">الرصيد للفترة (حتى تاريخ إلى)</div>
-            <div class="kpiValue" id="balTo">0</div>
-          </div>
-        </section>
-
-        <section class="tabs">
-          <button class="tabBtn active" data-tab="balancesTab">الأرصدة</button>
-          <button class="tabBtn" data-tab="txnsTab">العمليات</button>
-        </section>
-
-        <!-- BALANCES -->
-        <section class="card tabPanel active" id="balancesTab">
-          <div class="row between">
-            <h2>الأرصدة</h2>
-            <div class="hint" id="statusMsg"></div>
-          </div>
-          <div class="balances" id="balancesList"></div>
-        </section>
-
-        <!-- TXNS -->
-        <section class="card tabPanel" id="txnsTab">
-          <div class="row between">
-            <h2 id="txTitle">العمليات</h2>
-            <div class="hint">فلتر الحساب + التاريخ</div>
-          </div>
-
-          <div class="filters">
-            <div class="field">
-              <label>الحساب</label>
-              <select id="walletPick"></select>
-            </div>
-            <div class="field">
-              <label>من</label>
-              <input type="date" id="fromPick" />
-            </div>
-            <div class="field">
-              <label>إلى</label>
-              <input type="date" id="toPick" />
-            </div>
-            <div class="field" style="grid-column:1/-1;">
-              <label>بحث</label>
-              <input id="q" placeholder="بحث في الوصف/المرجع/الحساب..." />
-            </div>
-          </div>
-
-          <div class="txTotals" id="txTotals"></div>
-
-          <div class="tableWrap">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>التاريخ</th>
-                  <th>الحساب</th>
-                  <th>مقبوضات</th>
-                  <th>مدفوعات</th>
-                  <th>الوصف</th>
-                  <th>مرجع</th>
-                </tr>
-              </thead>
-              <tbody id="txBody">
-                <tr><td colspan="6" class="muted">حمّل البيانات أولاً</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-      </section>
-    </main>
-  </div>
-
-  <script>
-    window.BUILD="20260205-GH-FINAL";
-    window.LINKS={
-      TXNS: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRssV-EjmeIgbkKDHhZipxc3yiojVIrsmNzs64GTF3LDsht4HNQaTvxtG1Yvikj4ULFKWqJwQobJgQ9/pub?gid=743977498&single=true&output=csv",
-      WALLETS: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRssV-EjmeIgbkKDHhZipxc3yiojVIrsmNzs64GTF3LDsht4HNQaTvxtG1Yvikj4ULFKWqJwQobJgQ9/pub?gid=1099804044&single=true&output=csv",
-      DASH: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRssV-EjmeIgbkKDHhZipxc3yiojVIrsmNzs64GTF3LDsht4HNQaTvxtG1Yvikj4ULFKWqJwQobJgQ9/pub?gid=746752754&single=true&output=csv"
-    };
-  </script>
-  <script src="./app.js?v=20260205-GH-FINAL"></script>
-</body>
-</html>
