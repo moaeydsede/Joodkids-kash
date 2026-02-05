@@ -31,7 +31,7 @@ body{margin:0;background:linear-gradient(180deg,#070b14,#0b1220);color:var(--tex
   border-radius:var(--r);padding:14px;box-shadow:var(--shadow);
 }
 .stack{display:flex;flex-direction:column;gap:12px;}
-.cards{display:grid;grid-template-columns: 1.6fr 1fr 1fr;gap:12px;}
+.cards{display:grid;grid-template-columns: 1.6fr 1fr 1fr 1fr;gap:12px;}
 @media (max-width:900px){ .cards{grid-template-columns:1fr;} .actions{justify-content:flex-end}}
 h2{margin:0 0 10px 0;font-size:16px}
 h3{margin:0;font-size:15px}

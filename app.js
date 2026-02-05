@@ -48,6 +48,7 @@
     token: localStorage.getItem(CONFIG.SESSION_KEY || "wm_session") || "",
     wallets: [],
     txns: [],
+    txnsUpToTo: [],
     selectedWalletId: "ALL",
     from: "",
     to: "",
@@ -158,6 +159,37 @@
     $("grand").textContent = fmt(totals.grand || 0);
     $("todayLabel").textContent = `اليوم: ${totals.todayKey || ""}`;
   }
+}
+
+  function computeBalanceAtTo(){
+    const to = state.to || "";
+    const wid = state.selectedWalletId || "ALL";
+    if (!to) { const el = $("balAt"); if(el) el.textContent = "0"; return; }
+
+    const upRows = state.txnsUpToTo || [];
+    const el = $("balAt");
+    if (!el) return;
+
+    if (wid === "ALL"){
+      let total = 0;
+      state.wallets.forEach(w => {
+        const net = upRows
+          .filter(r => String(r.walletId||"") === String(w.id))
+          .reduce((s,r)=> s + toNumber(r.receipts) - toNumber(r.payments), 0);
+        total += toNumber(w.opening) + net;
+      });
+      el.textContent = fmt(total);
+      return;
+    }
+
+    const w = state.wallets.find(x => String(x.id) === String(wid));
+    const opening = w ? toNumber(w.opening) : 0;
+    const net = upRows
+      .filter(r => String(r.walletId||"") === String(wid))
+      .reduce((s,r)=> s + toNumber(r.receipts) - toNumber(r.payments), 0);
+    el.textContent = fmt(opening + net);
+  }
+
 
   function renderTxnsTable(rows){
     const body = $("txBody");
@@ -232,6 +264,7 @@
     title.textContent = `العمليات — ${wName}`;
 
     renderTxnsTable(rows);
+    computeBalanceAtTo();
   }
 
   async function refreshAll(reason=""){
@@ -260,6 +293,17 @@
       });
       if (!tx.ok) throw new Error(tx.msg || "فشل txns");
       state.txns = tx.rows || [];
+
+      // rows up to (to) for computing balance at date
+      const tx2 = await apiPost({
+        action: "txns",
+        token: state.token,
+        walletId: "ALL",
+        from: "",
+        to: state.to || ""
+      });
+      if (!tx2.ok) throw new Error(tx2.msg || "فشل txns");
+      state.txnsUpToTo = tx2.rows || [];
       applyFilters();
 
       $("chipUpdated").textContent = `آخر تحديث: ${new Date().toLocaleString("ar-EG")}`;
