@@ -1,373 +1,0 @@
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="theme-color" content="#111827"/>
-  <title>VIP Cashbook</title>
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <div class="bg"></div>
-
-  <!-- LOGIN -->
-  <main id="loginView" class="auth">
-    <section class="auth-card">
-      <div class="auth-brand">
-        <div class="vip-badge">VIP</div>
-        <div>
-          <h1>Cashbook</h1>
-          <p>دفتر يومية الصندوق والمحافظ والحسابات</p>
-        </div>
-      </div>
-
-      <form id="loginForm" class="auth-form" autocomplete="on">
-        <label>
-          <span>اسم المستخدم</span>
-          <input id="loginUsername" type="text" inputmode="text" autocomplete="username" placeholder="مثال: admin" required />
-        </label>
-        <label>
-          <span>كلمة المرور</span>
-          <div class="pass-wrap">
-            <input id="loginPassword" type="password" autocomplete="current-password" placeholder="•••••" required />
-            <button type="button" class="icon-btn" id="togglePass" title="إظهار/إخفاء">
-              👁️
-            </button>
-          </div>
-        </label>
-
-        <button class="btn primary" type="submit">دخول</button>
-
-        <div class="hint-row"><span>Username:</span><code>admin</code></div>
-          <div class="hint-row"><span>Password:</span><code>12345</code></div>
-        </div>
-</form>
-    </section>
-  </main>
-
-  <!-- APP -->
-  <div id="appView" class="app hidden">
-    <header class="topbar">
-      <div class="brand">
-        <div class="vip-badge small">VIP</div>
-        <div class="brand-text">
-          <div class="title">Cashbook</div>
-          <div class="subtitle" id="subtitleLine">الأرصدة</div>
-        </div>
-      </div>
-
-      <div class="top-actions">
-        <button class="chip" id="themeBtn" title="تبديل الوضع">🌓</button>
-        <button class="chip" id="exportBtn" title="تصدير CSV">⬇️ CSV</button>
-        <button class="chip" id="printBtn" title="طباعة">🖨️</button>
-        <button class="chip danger" id="logoutBtn" title="تسجيل خروج">خروج</button>
-      </div>
-    </header>
-
-    <aside class="sidebar">
-      <nav class="nav">
-        <button class="nav-item active" data-view="dashboard">
-          <span class="nav-ico">📊</span><span>الأرصدة</span>
-        </button>
-        <button class="nav-item" data-view="transactions">
-          <span class="nav-ico">🧾</span><span>العمليات</span>
-        </button>
-        <button class="nav-item" data-view="accounts">
-          <span class="nav-ico">💼</span><span>الحسابات</span>
-        </button>
-        <button class="nav-item owner-only" data-view="users">
-          <span class="nav-ico">👥</span><span>المستخدمين</span>
-        </button>
-
-        <div class="nav-footer">
-          <div class="pill">
-            <div class="pill-title">المستخدم</div>
-            <div class="pill-value" id="currentUserName">—</div>
-          </div>
-          <div class="pill">
-            <div class="pill-title">الدور</div>
-            <div class="pill-value" id="currentUserRole">—</div>
-          </div>
-        </div>
-      </nav>
-    </aside>
-
-    <main class="content">
-      <!-- DASHBOARD -->
-      <section id="view-dashboard" class="view">
-        <div class="grid-2">
-          <div class="card">
-            <div class="card-head">
-              <h2>ملخص اليوم</h2>
-              <div class="muted small" id="todayLabel">—</div>
-            </div>
-            <div class="kpis">
-              <div class="kpi">
-                <div class="kpi-label">إجمالي المقبوضات</div>
-                <div class="kpi-value" id="kpiIn">—</div>
-              </div>
-              <div class="kpi">
-                <div class="kpi-label">إجمالي المدفوعات</div>
-                <div class="kpi-value" id="kpiOut">—</div>
-              </div>
-              <div class="kpi">
-                <div class="kpi-label">صافي الحركة</div>
-                <div class="kpi-value" id="kpiNet">—</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="card-head">
-              <h2>إضافة عملية بسرعة</h2>
-</div>
-
-            <form id="quickForm" class="form">
-              <div class="row">
-                <label class="grow">
-                  <span>الحساب</span>
-                  <select id="qAccount" required></select>
-                </label>
-                <label class="grow">
-                  <span>النوع</span>
-                  <select id="qType" required>
-                    <option value="in">قبض</option>
-                    <option value="out">دفع</option>
-                  </select>
-                </label>
-              </div>
-
-              <div class="row">
-                <label class="grow">
-                  <span>المبلغ</span>
-                  <input id="qAmount" type="number" min="0" step="0.01" placeholder="0" required />
-                </label>
-                <label class="grow">
-                  <span>التاريخ</span>
-                  <input id="qDate" type="date" required />
-                </label>
-              </div>
-
-              <label>
-                <span>ملاحظة</span>
-                <input id="qNote" type="text" placeholder="مثال: مبيعات / مصروف" />
-              </label>
-
-              <button class="btn primary" type="submit">إضافة</button>
-</form>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-head">
-            <h2>الأرصدة حسب الحساب</h2>
-</div>
-          <div class="table-wrap">
-            <table class="table" id="balancesTable">
-              <thead>
-                <tr>
-                  <th>الحساب</th>
-                  <th>النوع</th>
-                  <th>مقبوضات</th>
-                  <th>مدفوعات</th>
-                  <th>الرصيد</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <!-- TRANSACTIONS -->
-      <section id="view-transactions" class="view hidden">
-        <div class="card">
-          <div class="card-head">
-            <h2>العمليات</h2>
-</div>
-
-          <div class="filters">
-            <label>
-              <span>الحساب</span>
-              <select id="fAccount"></select>
-            </label>
-            <label>
-              <span>من</span>
-              <input id="fFrom" type="date" />
-            </label>
-            <label>
-              <span>إلى</span>
-              <input id="fTo" type="date" />
-            </label>
-            <label>
-              <span>بحث</span>
-              <input id="fSearch" type="text" placeholder="ملاحظة / رقم" />
-            </label>
-            <button class="btn" id="clearFiltersBtn" type="button">مسح</button>
-          </div>
-
-          <div class="divider"></div>
-
-          <form id="txForm" class="form">
-            <div class="row">
-              <label class="grow">
-                <span>الحساب</span>
-                <select id="tAccount" required></select>
-              </label>
-              <label class="grow">
-                <span>النوع</span>
-                <select id="tType" required>
-                  <option value="in">قبض</option>
-                  <option value="out">دفع</option>
-                </select>
-              </label>
-            </div>
-
-            <div class="row">
-              <label class="grow">
-                <span>المبلغ</span>
-                <input id="tAmount" type="number" min="0" step="0.01" placeholder="0" required />
-              </label>
-              <label class="grow">
-                <span>التاريخ</span>
-                <input id="tDate" type="date" required />
-              </label>
-            </div>
-
-            <label>
-              <span>ملاحظة</span>
-              <input id="tNote" type="text" placeholder="مثال: إيجار / مبيعات / تحويل" />
-            </label>
-
-            <button class="btn primary" type="submit">إضافة عملية</button>
-            <input type="hidden" id="editId" value="" />
-          </form>
-
-          <div class="divider"></div>
-
-          <div class="table-wrap">
-            <table class="table" id="txTable">
-              <thead>
-                <tr>
-                  <th>التاريخ</th>
-                  <th>الحساب</th>
-                  <th>النوع</th>
-                  <th>المبلغ</th>
-                  <th>ملاحظة</th>
-                  <th>إجراءات</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-
-          <div class="muted small" id="txCount">—</div>
-        </div>
-      </section>
-
-      <!-- ACCOUNTS -->
-      <section id="view-accounts" class="view hidden">
-        <div class="card">
-          <div class="card-head">
-            <h2>الحسابات</h2>
-</div>
-
-          <form id="accForm" class="form">
-            <div class="row">
-              <label class="grow">
-                <span>اسم الحساب</span>
-                <input id="aName" type="text" placeholder="مثال: صندوق" required />
-              </label>
-              <label class="grow">
-                <span>النوع</span>
-                <select id="aType" required>
-                  <option value="cash">صندوق</option>
-                  <option value="wallet">محفظة إلكترونية</option>
-                  <option value="insta">حساب انستا</option>
-                  <option value="other">أخرى</option>
-                </select>
-              </label>
-            </div>
-
-            <label>
-              <span>ملاحظة</span>
-              <input id="aNote" type="text" placeholder="اختياري" />
-            </label>
-
-            <button class="btn primary" type="submit">حفظ الحساب</button>
-            <input type="hidden" id="aEditId" value="" />
-          </form>
-
-          <div class="divider"></div>
-
-          <div class="table-wrap">
-            <table class="table" id="accTable">
-              <thead>
-                <tr>
-                  <th>اسم الحساب</th>
-                  <th>النوع</th>
-                  <th>ملاحظة</th>
-                  <th>إجراءات</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-</div>
-      </section>
-
-      <!-- USERS -->
-      <section id="view-users" class="view hidden">
-        <div class="card">
-          <div class="card-head">
-            <h2>إدارة المستخدمين</h2>
-</div>
-
-          <form id="userForm" class="form">
-            <div class="row">
-              <label class="grow">
-                <span>اسم المستخدم</span>
-                <input id="uUsername" type="text" placeholder="مثال: user1" required />
-              </label>
-              <label class="grow">
-                <span>كلمة المرور</span>
-                <input id="uPassword" type="text" placeholder="مثال: 11111" required />
-              </label>
-            </div>
-
-            <div class="row">
-              <label class="grow">
-                <span>الاسم (اختياري)</span>
-                <input id="uName" type="text" placeholder="مثال: Ahmed" />
-              </label>
-            </div>
-
-            <button class="btn primary" type="submit">إضافة مستخدم</button>
-          </form>
-
-          <div class="divider"></div>
-
-          <div class="table-wrap">
-            <table class="table" id="usersTable">
-              <thead>
-                <tr>
-                  <th>اسم المستخدم</th>
-                  <th>الاسم</th>
-                  <th>الدور</th>
-                  <th>إجراءات</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-</div>
-      </section>
-
-    </main>
-  </div>
-
-  <div id="toast" class="toast hidden"></div>
-
-  <script src="app.js"></script>
-</body>
-</html>
