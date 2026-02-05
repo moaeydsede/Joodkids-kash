@@ -1,211 +1,0 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#0b1220" />
-  <title>Cash & Wallet Manager VIP</title>
-  <link rel="manifest" href="./manifest.json" />
-  <link rel="stylesheet" href="./styles.20260205v3.css" />
-</head>
-<body>
-  <div class="app">
-    <header class="topbar">
-      <div class="brand">
-        <div class="logo">💳</div>
-        <div class="titles">
-          <div class="title" id="appTitle">Cash & Wallet Manager VIP</div>
-          <div class="subtitle" id="buildTag" data-build="20260205v3">موبايل • أرصدة + عمليات • CRUD على Google Sheet — BUILD 20260205v3</div>
-        </div>
-      </div>
-      <div class="actions">
-        <button class="btn ghost" id="btnRefresh" style="display:none;">تحديث</button>
-        <button class="btn ghost" id="btnPrint" style="display:none;">طباعة</button>
-        <button class="btn danger" id="btnLogout" style="display:none;">خروج</button>
-      </div>
-    </header>
-
-    <main class="content">
-
-      <!-- LOGIN -->
-      <section class="card" id="loginCard">
-        <div class="row between">
-          <h2>تسجيل الدخول</h2>
-          <span class="badge">VIP</span>
-        </div>
-
-        <div class="grid2">
-          <div class="field">
-            <label>اسم المستخدم</label>
-            <input id="u" placeholder="مثال: Admin" autocomplete="username" />
-          </div>
-          <div class="field">
-            <label>كلمة المرور</label>
-            <input id="p" type="password" placeholder="مثال: 12345" autocomplete="current-password" />
-          </div>
-        </div>
-
-        <div class="row">
-          <button class="btn primary" id="btnLogin">دخول</button>
-          <div class="hint" id="loginMsg"></div>
-        </div>
-
-        <div class="note">
-          ملاحظة: هذا التطبيق Static على GitHub Pages، ويتواصل مع Google Sheet عبر Apps Script Web App (API).
-        </div>
-      </section>
-
-      <!-- APP -->
-      <section class="stack" id="appArea" style="display:none;">
-
-        <section class="cards">
-          <div class="kpi">
-            <div class="kpiLabel">إجمالي الرصيد الحالي</div>
-            <div class="kpiValue" id="grand">0</div>
-            <div class="kpiSub" id="todayLabel"></div>
-          </div>
-
-          <div class="kpi mini">
-            <div class="kpiLabel">مقبوضات (حسب الفلتر)</div>
-            <div class="kpiValue" id="fltRec">0</div>
-          </div>
-          <div class="kpi mini">
-            <div class="kpiLabel">مدفوعات (حسب الفلتر)</div>
-            <div class="kpiValue" id="fltPay">0</div>
-          </div>
-          <div class="kpi mini">
-            <div class="kpiLabel">رصيد حتى تاريخ (إلى)</div>
-            <div class="kpiValue" id="balAt">0</div>
-          </div>
-        </section>
-
-        <section class="tabs">
-          <button class="tabBtn active" data-tab="balancesTab">الأرصدة</button>
-          <button class="tabBtn" data-tab="txnsTab">العمليات</button>
-        </section>
-
-        <!-- BALANCES -->
-        <section class="card tabPanel active" id="balancesTab">
-          <div class="row between">
-            <h2>الأرصدة</h2>
-            <div class="hint" id="statusMsg"></div>
-          </div>
-
-          <div class="balances" id="balancesList"></div>
-        </section>
-
-        <!-- TXNS -->
-        <section class="card tabPanel" id="txnsTab">
-          <div class="row between">
-            <h2 id="txTitle">العمليات</h2>
-            <div class="row">
-              <button class="btn" id="btnAdd">إضافة عملية</button>
-            </div>
-          </div>
-
-          <div class="filters">
-            <div class="field">
-              <label>الحساب</label>
-              <select id="walletPick"></select>
-            </div>
-            <div class="field">
-              <label>من</label>
-              <input type="date" id="fromPick" />
-            </div>
-            <div class="field">
-              <label>إلى</label>
-              <input type="date" id="toPick" />
-            </div>
-            <div class="field" style="grid-column:1/-1;">
-              <label>بحث</label>
-              <input id="q" placeholder="بحث في الوصف/المرجع/الحساب..." />
-            </div>
-          </div>
-
-          <div class="txTotals" id="txTotals"></div>
-
-          <div class="tableWrap">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>التاريخ</th>
-                  <th>الحساب</th>
-                  <th>مقبوضات</th>
-                  <th>مدفوعات</th>
-                  <th>الوصف</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody id="txBody">
-                <tr><td colspan="6" class="muted">حمّل البيانات أولاً</td></tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="hint" id="chipUpdated"></div>
-        </section>
-
-      </section>
-    </main>
-
-    <!-- MODAL -->
-    <div class="modal" id="modal" style="display:none;">
-      <div class="modalCard">
-        <div class="row between">
-          <h3 id="mTitle">إضافة عملية</h3>
-          <button class="btn ghost" id="btnCloseModal">إغلاق</button>
-        </div>
-
-        <input type="hidden" id="mMode" value="add" />
-        <input type="hidden" id="mRow" value="" />
-
-        <div class="grid2">
-          <div class="field">
-            <label>التاريخ</label>
-            <input type="date" id="mDate" />
-          </div>
-
-          <div class="field">
-            <label>الحساب</label>
-            <select id="mWallet"></select>
-          </div>
-
-          <div class="field" style="grid-column:1/-1;">
-            <label>اسم الحساب (ACCOUNT)</label>
-            <input id="mAccount" placeholder="مثال: صندوق / فودافون كاش" />
-          </div>
-
-          <div class="field">
-            <label>المقبوضات</label>
-            <input id="mRec" type="number" inputmode="decimal" placeholder="0" />
-          </div>
-
-          <div class="field">
-            <label>المدفوعات</label>
-            <input id="mPay" type="number" inputmode="decimal" placeholder="0" />
-          </div>
-
-          <div class="field" style="grid-column:1/-1;">
-            <label>الوصف</label>
-            <input id="mDesc" placeholder="مثال: سداد عميل / مصروف شحن" />
-          </div>
-
-          <div class="field" style="grid-column:1/-1;">
-            <label>مرجع (اختياري)</label>
-            <input id="mRef" placeholder="INV-102" />
-          </div>
-        </div>
-
-        <div class="row">
-          <button class="btn primary" id="btnSaveTxn">حفظ</button>
-          <div class="hint" id="mMsg"></div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <script src="./config.20260205v3.js"></script>
-  <script src="./app.20260205v3.js"></script>
-</body>
-</html>
