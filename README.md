@@ -1,20 +1,16 @@
-# Wallet Viewer VIP — GitHub Only (Read-Only) — 20260205-GH-FINAL3
-
-✅ عرض الأرصدة + العمليات من Google Sheet (CSV Publish) بدون Apps Script.
+# Wallet VIP (GitHub Only) — 20260205-ULTIMATE
 
 ## الدخول
 - admin / 123456
 - فرزات / 123
 
 ## صفحات
-### 1) الأرصدة
-الحساب • المقبوضات • المدفوعات • الرصيد
+- الأرصدة: بطاقات لكل حساب (مقبوضات/مدفوعات/رصيد) + تحديث تلقائي، وأي حساب جديد يظهر تلقائيًا.
+- العمليات: اختيار حساب + تاريخ (من/إلى) => عرض عمليات TXNS لهذا الحساب ضمن الفترة + مجموع المقبوضات والمدفوعات + الرصيد حتى تاريخ (إلى).
 
-### 2) العمليات
-- اختيار الحساب
-- التاريخ (من / إلى)
-- تظهر العمليات مباشرة + مجموع المقبوضات/المدفوعات للفترة + الرصيد حتى تاريخ (إلى)
+## تحديث تلقائي
+كل 20 ثانية (مع زر تحديث يدوي أيضاً).
 
-## مصادر البيانات
-- TXNS: https://docs.google.com/spreadsheets/d/e/2PACX-1vRssV-EjmeIgbkKDHhZipxc3yiojVIrsmNzs64GTF3LDsht4HNQaTvxtG1Yvikj4ULFKWqJwQobJgQ9/pub?gid=743977498&single=true&output=csv
-- WALLETS: https://docs.google.com/spreadsheets/d/e/2PACX-1vRssV-EjmeIgbkKDHhZipxc3yiojVIrsmNzs64GTF3LDsht4HNQaTvxtG1Yvikj4ULFKWqJwQobJgQ9/pub?gid=1099804044&single=true&output=csv
+## CSV
+WALLETS: https://docs.google.com/spreadsheets/d/e/2PACX-1vRssV-EjmeIgbkKDHhZipxc3yiojVIrsmNzs64GTF3LDsht4HNQaTvxtG1Yvikj4ULFKWqJwQobJgQ9/pub?gid=1099804044&single=true&output=csv
+TXNS: https://docs.google.com/spreadsheets/d/e/2PACX-1vRssV-EjmeIgbkKDHhZipxc3yiojVIrsmNzs64GTF3LDsht4HNQaTvxtG1Yvikj4ULFKWqJwQobJgQ9/pub?gid=743977498&single=true&output=csv
