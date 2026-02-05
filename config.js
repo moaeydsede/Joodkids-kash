@@ -11,7 +11,8 @@ export const CONFIG = {
 
   // ✅ ضع هنا رابط نشر Apps Script Web App (exec)
   // مثال: "https://script.google.com/macros/s/AKfycbxxxxxx/exec"
-  API_BASE: "https://script.google.com/macros/s/AKfycbxFNjpEnn40YcRbBoIf03Kcx98RtyuhqvCeHV-xI4JCWDMC7EMclXN3LTYrqBKCzGH0jg/exec",
+  API_BASE: "https://script.google.com/macros/s/AKfycbyg_mom-_5AJ4wDnKwgIFUCeG3YFBZv1ldt3XqECLr7QsuwiPn4KrdgsDq41x3kAEcsSw/exec",
+  
   
 
   AUTH: { ENABLED: true },
