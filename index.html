@@ -1,0 +1,1834 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#111827" />
+  <title>VIP Cashbook</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="assets/icons/icon-192.png">
+  <style>
+    :root{
+      --bg:#0a0f1f;
+      --card:#0f172a;
+      --card2:#0b1226;
+      --text:#e5e7eb;
+      --muted:#9aa6bf;
+      --line:rgba(148,163,184,.16);
+      --primary:#16a34a; /* emerald */
+      --danger:#dc2626;
+      --warn:#d97706;
+      --info:#2563eb;
+      --shadow: 0 14px 34px rgba(0,0,0,.45);
+      --radius:18px;
+      --tap: 54px;
+      --font: system-ui, -apple-system, "Cairo", "Segoe UI", Roboto, Arial, sans-serif;
+    
+      --bg:#0b1020;
+      --card:#0f172a;
+      --card2:#111c35;
+      --text:#e5e7eb;
+      --muted:#94a3b8;
+      --line:rgba(148,163,184,.18);
+      --primary:#22c55e;
+      --danger:#ef4444;
+      --warn:#f59e0b;
+      --info:#60a5fa;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius:18px;
+      --tap: 54px;
+      --font: system-ui, -apple-system, "Cairo", "Segoe UI", Roboto, Arial, sans-serif;
+    }
+    *{box-sizing:border-box}
+    html,body{
+      overflow-x:hidden;height:100%}
+    body{
+      overflow-x:hidden;
+      margin:0;
+      font-family:var(--font);
+      background: radial-gradient(1200px 900px at 20% -10%, rgba(34,197,94,.14), transparent 45%),
+                  radial-gradient(900px 600px at 110% 0%, rgba(96,165,250,.12), transparent 40%),
+                  radial-gradient(900px 700px at 30% 120%, rgba(245,158,11,.10), transparent 40%),
+                  var(--bg);
+      color:var(--text);
+      -webkit-tap-highlight-color: transparent;
+    }
+    a{color:inherit}
+    .app{
+      max-width: 980px;
+      margin: 0 auto;
+      min-height: 100%;
+      display:flex;
+      flex-direction:column;
+    }
+    .topbar{
+      position:sticky; top:0; z-index:50;
+      background: rgba(11,16,32,.82);
+      backdrop-filter: blur(12px);
+      border-bottom:1px solid var(--line);
+      padding: 14px 14px calc(14px + env(safe-area-inset-top));
+    }
+    .topbar-inner{
+      display:flex; align-items:center; gap:10px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px;
+      font-weight:800; letter-spacing:.2px;
+      user-select:none;
+      flex:1;
+    }
+    .brand .logo{
+      width:38px;height:38px;border-radius:14px;
+      background: linear-gradient(135deg, rgba(34,197,94,.95), rgba(96,165,250,.85));
+      box-shadow: 0 14px 30px rgba(34,197,94,.15);
+      display:grid; place-items:center;
+      font-weight:900;
+      color:#0b1020;
+    }
+    .pill{
+      font-size:12px;
+      color: var(--muted);
+      border:1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 10px;
+      display:flex; gap:8px; align-items:center;
+      white-space:nowrap;
+    }
+    .pill b{color:var(--text); font-weight:800}
+    .nav{
+      display:flex; gap:8px; margin-top: 12px;
+      overflow:auto;
+      padding-bottom: 2px;
+    }
+    .tab{
+      border:1px solid var(--line);
+      background: rgba(15,23,42,.6);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 10px 14px;
+      min-height: 44px;
+      display:flex; align-items:center; gap:8px;
+      cursor:pointer;
+      user-select:none;
+      transition: .15s transform ease, .15s background ease, .15s color ease;
+      white-space:nowrap;
+      font-weight:700;
+    }
+    .tab:active{transform: scale(.98)}
+    .tab.active{
+      background: rgba(34,197,94,.15);
+      border-color: rgba(34,197,94,.45);
+      color: var(--text);
+    }
+    .content{
+      padding: 14px;
+      padding-bottom: calc(18px + env(safe-area-inset-bottom));
+      flex:1;
+    }
+    .grid{
+      display:grid;
+      gap:12px;
+    }
+    @media (min-width: 860px){
+      .grid.two{grid-template-columns:1fr 1fr}
+      .grid.three{grid-template-columns:1fr 1fr 1fr}
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(15,23,42,.88), rgba(15,23,42,.62));
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+    .card h2{
+      margin:0 0 10px 0;
+      font-size: 16px;
+      letter-spacing:.2px;
+    }
+    .sub{
+      color:var(--muted);
+      font-size: 13px;
+      line-height:1.45;
+    }
+    .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    .row.between{justify-content:space-between}
+    .btn{
+      border:1px solid var(--line);
+      background: rgba(17,28,53,.7);
+      color: var(--text);
+      border-radius: 14px;
+      padding: 12px 14px;
+      min-height: var(--tap);
+      cursor:pointer;
+      font-weight:800;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      user-select:none;
+      transition: .15s transform ease, .15s background ease, .15s border-color ease, .15s opacity ease;
+    }
+    .btn:active{transform: scale(.985)}
+    .btn.primary{
+      background: rgba(34,197,94,.16);
+      border-color: rgba(34,197,94,.5);
+    }
+    .btn.danger{
+      background: rgba(239,68,68,.12);
+      border-color: rgba(239,68,68,.45);
+    }
+    .btn.ghost{
+      background: transparent;
+    }
+    .btn.small{
+      padding: 10px 12px;
+      min-height: 44px;
+      border-radius: 12px;
+      font-weight:800;
+      font-size: 13px;
+    }
+    .btn.wide{width:100%}
+    .btn:disabled{opacity:.55; cursor:not-allowed}
+    .input, select, textarea{
+      width:100%;
+      border:1px solid var(--line);
+      background: rgba(17,28,53,.45);
+      color:var(--text);
+      border-radius: 14px;
+      padding: 14px 14px;
+      min-height: var(--tap);
+      outline:none;
+      font-size: 16px; /* big like WhatsApp */
+    }
+    textarea{min-height: 90px; resize: vertical}
+    .label{font-size:13px;color:var(--muted);margin:0 0 6px 2px}
+    .sep{height:1px;background:var(--line);margin:12px 0}
+    .kpi{
+      display:flex; flex-direction:column; gap:6px;
+      padding: 14px;
+      border-radius: 16px;
+      border:1px solid var(--line);
+      background: rgba(17,28,53,.45);
+    }
+    .kpi .t{color:var(--muted); font-size:12px}
+    .kpi .v{font-size: 20px; font-weight:900; letter-spacing:.2px}
+    .kpi .v small{font-size:13px; color:var(--muted); font-weight:800}
+    .list{
+      display:flex; flex-direction:column; gap:10px;
+    }
+    .item{
+      border:1px solid var(--line);
+      background: rgba(17,28,53,.45);
+      border-radius: 16px;
+      padding: 12px;
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      justify-content:space-between;
+    }
+    .item .meta{display:flex; flex-direction:column; gap:4px}
+    .item .meta .title{font-weight:900}
+    .item .meta .small{font-size:12px;color:var(--muted); line-height:1.35}
+    .tag{
+      font-size:12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border:1px solid var(--line);
+      color: var(--muted);
+      white-space:nowrap;
+      font-weight:800;
+    }
+    .tag.in{border-color: rgba(34,197,94,.45); color: rgba(167,243,208,.95); background: rgba(34,197,94,.08)}
+    .tag.out{border-color: rgba(239,68,68,.45); color: rgba(254,202,202,.95); background: rgba(239,68,68,.08)}
+    .tag.note{border-color: rgba(96,165,250,.45); color: rgba(191,219,254,.95); background: rgba(96,165,250,.08)}
+    .toast{
+      position:fixed;
+      inset:auto 12px 12px 12px;
+      z-index: 1000;
+      display:none;
+    }
+    .toast.show{display:block}
+    .toast .box{
+      max-width: 980px;
+      margin: 0 auto;
+      border:1px solid var(--line);
+      background: rgba(15,23,42,.92);
+      border-radius: 18px;
+      padding: 12px 14px;
+      box-shadow: var(--shadow);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .toast .msg{font-weight:800}
+    .toast .hint{color:var(--muted);font-size:12px;margin-top:2px}
+    .modal{
+      position:fixed; inset:0; z-index:2000;
+      background: rgba(0,0,0,.5);
+      display:none;
+      padding: 14px;
+    }
+    .modal.show{display:grid; place-items:center}
+    .modal .panel{
+      width:min(560px, 100%);
+      background: rgba(11,16,32,.95);
+      border:1px solid var(--line);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+    .modal .panel h3{margin:0 0 8px 0}
+    .hintbox{
+      border:1px dashed rgba(148,163,184,.35);
+      border-radius: 16px;
+      padding: 12px;
+      background: rgba(17,28,53,.30);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    .muted{color:var(--muted)}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;}
+    .center{display:grid; place-items:center}
+    .login-wrap{max-width: 520px; margin: 26px auto}
+    .big-title{font-size: 20px; font-weight: 900; margin: 0 0 6px 0}
+    .small-title{font-size: 13px; color: var(--muted); margin:0 0 14px 0; line-height:1.5}
+    .footer{
+      color: rgba(148,163,184,.9);
+      font-size: 12px;
+      text-align:center;
+      padding: 22px 10px 14px 10px;
+    }
+    .badge{
+      display:inline-flex; align-items:center; gap:6px;
+      border: 1px solid var(--line);
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(17,28,53,.35);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .right{margin-inline-start:auto}
+    .hide{display:none !important}
+    .danger-text{color: rgba(254,202,202,.95)}
+
+    /* PRO LAYOUT TWEAKS */
+    #kpis{grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); overflow:hidden; padding-bottom:0}
+    .quick-actions{display:flex; gap:10px}
+    .quick-actions .btn{flex:1; min-width:0}
+    /* Quick buttons in notes card side-by-side */
+    .quick-actions .btn{flex:1; min-width:0}
+
+    .ok-text{color: rgba(167,243,208,.95)}
+    .warn-text{color: rgba(253,230,138,.95)}
+  
+    /* CLEAN MODE: hide notes/hints */
+    .hintbox{display:none !important}
+    .sub{display:none !important}
+    </style>
+    
+</head>
+<body>
+<div class="app">
+
+  <div class="topbar" id="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="logo">V</div>
+        <div>
+          <div style="font-size:15px;">VIP Cashbook</div>
+          <div class="sub" id="subtitle">Mobile App (PWA)</div>
+        </div>
+      </div>
+      <div class="pill" id="userPill" style="display:none">
+        <span>👤</span>
+        <b id="userName">admin</b>
+        <span class="muted" id="userRole">ADMIN</span>
+      </div>
+      <button class="btn small ghost" id="logoutBtn" style="display:none" title="تسجيل الخروج">خروج</button>
+    </div>
+    <div class="nav" id="nav" style="display:none">
+      <div class="tab active" data-view="balances">الأرصدة</div>
+      <div class="tab" data-view="transactions">العمليات</div>
+      <div class="tab" data-view="accounts">الحسابات</div>
+      <div class="tab" data-view="users" id="usersTab">المستخدمين</div>
+      <div class="tab" data-view="import">استيراد Excel</div>
+      <div class="tab" data-view="settings" id="settingsTab">الإعدادات</div>
+    </div>
+  </div>
+
+  <div class="content" id="content">
+
+    <!-- LOGIN -->
+    <section id="view-login" class="login-wrap">
+      <div class="card">
+        <div class="row between">
+          <div>
+            <div class="big-title">تسجيل الدخول</div>
+            <div class="small-title">دخول آمن لإدارة الصندوق والمحافظ والحسابات — تصميم موبايل كبير وواضح.</div>
+          </div>
+          <span class="badge">Offline + LocalStorage</span>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="grid">
+          <div>
+            <div class="label">اسم المستخدم</div>
+            <input class="input" id="loginUser" placeholder="admin" autocomplete="username" />
+          </div>
+          <div>
+            <div class="label">كلمة السر</div>
+            <input class="input" id="loginPass" type="password" placeholder="12345" autocomplete="current-password" />
+          </div>
+          <button class="btn primary wide" id="loginBtn">دخول</button>
+
+          <div class="hintbox">
+            <div><b>بيانات الدخول الافتراضية:</b></div>
+            <div class="mono">Username: admin</div>
+            <div class="mono">Password: 12345</div>
+            <div class="muted">تقبل أيضًا: ١٢٣٤٥</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">VIP Cashbook – PWA • كل البيانات محفوظة على نفس الجهاز</div>
+    </section>
+
+    <!-- BALANCES -->
+    <section id="view-balances" class="hide">
+      <div class="grid two">
+        <div class="card">
+          <h2>ملخص الأرصدة</h2>
+          <div class="sub">إجمالي الرصيد لكل حساب (حساب/محفظة/صندوق).</div>
+          <div class="sep"></div>
+          <div class="grid three" id="kpis"></div>
+        </div>
+
+        <div class="card">
+          <h2>ملاحظات سريعة</h2>
+          <div class="hintbox">
+            <div>• الأرصدة تُحسب تلقائيًا من العمليات (قبض/صرف).</div>
+            <div>• لإضافة عملية: افتح صفحة <b>العمليات</b> ثم <b>إضافة عملية</b>.</div>
+            <div>• لإضافة حساب جديد: صفحة <b>الحسابات</b>.</div>
+            <div>• الاستيراد من Excel متاح من صفحة <b>استيراد Excel</b>.</div>
+          </div>
+          <div class="sep"></div>
+          <div class="row quick-actions">
+            <button class="btn primary" onclick="openAddTx()">➕ إضافة عملية</button>
+            <button class="btn" onclick="printBalances()">📄 PDF الأرصدة</button>
+            <button class="btn" onclick="switchView('transactions')">عرض العمليات</button>
+          </div>
+        </div>
+      </div>
+
+      <div style="height:12px"></div>
+
+      <div class="card">
+        <div class="row between">
+          <h2 style="margin:0">قائمة الأرصدة</h2>
+          <span class="badge" id="balancesCount">0 حساب</span>
+        </div>
+        <div class="sep"></div>
+        <div class="list" id="balancesList"></div>
+      </div>
+    </section>
+
+    <!-- TRANSACTIONS -->
+    <section id="view-transactions" class="hide">
+      <div class="card">
+        <div class="row between">
+          <div>
+            <h2 style="margin:0 0 6px 0">العمليات</h2>
+            <div class="sub">فلترة حسب الحساب/التاريخ + بحث. عرض كبطاقات موبايل.</div>
+          </div>
+          <div class="row">
+            <button class="btn primary" onclick="openAddTx()">➕ إضافة</button>
+            <button class="btn" onclick="printTransactions()">📄 PDF العمليات</button>
+            <button class="btn" onclick="exportJson()">⬇️ تصدير JSON</button>
+          </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="grid two">
+          <div>
+            <div class="label">الحساب</div>
+            <select id="fAccount"></select>
+          </div>
+          <div>
+            <div class="label">بحث</div>
+            <input class="input" id="fSearch" placeholder="ابحث في الوصف/المرجع/المبلغ..." />
+          </div>
+          <div>
+            <div class="label">من تاريخ</div>
+            <input class="input" id="fFrom" type="date" />
+          </div>
+          <div>
+            <div class="label">إلى تاريخ</div>
+            <input class="input" id="fTo" type="date" />
+          </div>
+        </div>
+
+        
+        <div class="grid three" id="txSummary" style="margin-top:12px">
+          <div class="kpi"><div class="t">إجمالي المقبوضات</div><div class="v" id="sumIn">0 <small>ج.م</small></div></div>
+          <div class="kpi"><div class="t">إجمالي المدفوعات</div><div class="v" id="sumOut">0 <small>ج.م</small></div></div>
+          <div class="kpi"><div class="t">الرصيد (صافي)</div><div class="v" id="sumNet">0 <small>ج.م</small></div></div>
+        </div>
+
+        <div class="row" style="margin-top:12px">
+          <button class="btn" onclick="resetFilters()">إعادة ضبط</button>
+          <button class="btn" onclick="renderTransactions()">تطبيق الفلاتر</button>
+          <span class="badge right" id="txCount">0 عملية</span>
+        </div>
+      </div>
+
+      <div style="height:12px"></div>
+
+      <div class="list" id="txList"></div>
+    </section>
+
+    <!-- ACCOUNTS -->
+    <section id="view-accounts" class="hide">
+      <div class="card">
+        <div class="row between">
+          <div>
+            <h2 style="margin:0 0 6px 0">إدارة الحسابات</h2>
+            <div class="sub">أضف صندوق/محفظة/حساب. يمكن تعطيل/حذف حساب لا يحتوي عمليات.</div>
+          </div>
+          <button class="btn primary" onclick="openAddAccount()">➕ حساب جديد</button>
+        </div>
+        <div class="sep"></div>
+        <div class="list" id="accountsList"></div>
+      </div>
+    </section>
+
+    <!-- USERS -->
+    <section id="view-users" class="hide">
+      <div class="card">
+        <div class="row between">
+          <div>
+            <h2 style="margin:0 0 6px 0">إدارة المستخدمين</h2>
+            <div class="sub">هذه الصفحة للأدمن فقط. إضافة/تعطيل مستخدمين.</div>
+          </div>
+          <button class="btn primary" id="addUserBtn" onclick="openAddUser()">➕ مستخدم</button>
+        </div>
+        <div class="sep"></div>
+        <div class="list" id="usersList"></div>
+      </div>
+    </section>
+
+    <!-- IMPORT -->
+    <section id="view-import" class="hide">
+      <div class="card">
+        <h2>استيراد من Excel</h2>
+        <div class="sub">يدعم ملفات .xlsx عبر XLSX.js. سيتم دمج الحسابات/العمليات مع البيانات الحالية.</div>
+        <div class="sep"></div>
+
+        <div class="grid two">
+          <div>
+            <div class="label">ملف Excel</div>
+            <input class="input" id="xlsxFile" type="file" accept=".xlsx,.xls" />
+          </div>
+          <div>
+            <div class="label">ورقة العمل (Sheet)</div>
+            <select id="xlsxSheet">
+              <option value="">— اختر بعد رفع الملف —</option>
+            </select>
+          </div>
+        </div>
+
+        
+        <div class="grid three" id="txSummary" style="margin-top:12px">
+          <div class="kpi"><div class="t">إجمالي المقبوضات</div><div class="v" id="sumIn">0 <small>ج.م</small></div></div>
+          <div class="kpi"><div class="t">إجمالي المدفوعات</div><div class="v" id="sumOut">0 <small>ج.م</small></div></div>
+          <div class="kpi"><div class="t">الرصيد (صافي)</div><div class="v" id="sumNet">0 <small>ج.م</small></div></div>
+        </div>
+
+        <div class="row" style="margin-top:12px">
+          <button class="btn primary" id="importBtn" disabled>⬆️ استيراد</button>
+          <button class="btn" onclick="downloadTemplate()">⬇️ قالب Excel</button>
+          <span class="badge right" id="importInfo">جاهز</span>
+        </div>
+
+        <div class="sep"></div>
+        <div class="hintbox">
+          <div><b>الأعمدة المطلوبة (يمكن عربي/إنجليزي):</b></div>
+          <div class="mono" style="margin-top:6px; direction:ltr; text-align:left;">
+            date | account | type | amount | note | ref
+          </div>
+          <div class="muted" style="margin-top:6px;">
+            • type: IN أو OUT (أو قبض/صرف)<br>
+            • date: بصيغة yyyy-mm-dd أو تاريخ Excel عادي
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section id="view-settings" class="hide">
+      <div class="grid two">
+        <div class="card">
+          <h2>الإعدادات</h2>
+          <div class="sub">نسخ احتياطي / استعادة / مسح البيانات.</div>
+          <div class="sep"></div>
+          <div class="row" style="width:100%">
+            <button class="btn" onclick="backupDownload()">⬇️ تحميل نسخة احتياطية</button>
+            <label class="btn" style="cursor:pointer">
+              ⬆️ استعادة نسخة
+              <input id="restoreFile" type="file" accept=".json" class="hide">
+            </label>
+          </div>
+          <div style="height:10px"></div>
+          <button class="btn danger wide" onclick="confirmWipe()">🧨 مسح كل البيانات</button>
+
+          <div class="sep"></div>
+          <div class="hintbox">
+            <div><b>مهم:</b> البيانات محفوظة محليًا على الجهاز. عند مسح بيانات المتصفح أو تغيير الجهاز ستفقد البيانات.</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>معلومات</h2>
+          <div class="hintbox">
+            <div>• لا يوجد Service Worker لتجنب مشاكل الكاش.</div>
+            <div>• يعمل Offline جزئيًا (LocalStorage).</div>
+            <div>• مناسب 100% للموبايل (أزرار كبيرة مثل واتساب).</div>
+          </div>
+          <div class="sep"></div>
+          <div class="row">
+            <span class="badge">Version <span id="ver">1.0.0</span></span>
+            <span class="badge">RTL</span>
+            <span class="badge">PWA</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal" id="modal">
+  <div class="panel">
+    <div class="row between">
+      <h3 id="modalTitle" style="margin:0">—</h3>
+      <button class="btn small ghost" onclick="closeModal()">✕</button>
+    </div>
+    <div class="sep"></div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <div class="box">
+    <div>
+      <div class="msg" id="toastMsg">تم</div>
+      <div class="hint" id="toastHint"></div>
+    </div>
+    <button class="btn small" onclick="hideToast()">حسناً</button>
+  </div>
+</div>
+
+<!-- XLSX (CDN) -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+<script>
+/* =============================
+   VIP Cashbook – Single File App
+   Data stored in LocalStorage
+   ============================= */
+
+const APP_KEY = "vip_cashbook_v1";
+const VERSION = "1.0.0";
+document.getElementById("ver").textContent = VERSION;
+
+// Arabic digits -> English digits
+function normalizeDigits(str){
+  if(str == null) return "";
+  const map = {"٠":"0","١":"1","٢":"2","٣":"3","٤":"4","٥":"5","٦":"6","٧":"7","٨":"8","٩":"9","۰":"0","۱":"1","۲":"2","۳":"3","۴":"4","۵":"5","۶":"6","۷":"7","۸":"8","۹":"9"};
+  return String(str).replace(/[٠-٩۰-۹]/g, d => map[d] ?? d).trim();
+}
+function nowISO(){
+  const d = new Date();
+  const pad = n => String(n).padStart(2,"0");
+  return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+}
+function money(n){
+  const x = Number(n || 0);
+  // format for ar-EG but keep digits Arabic locale
+  try{
+    return x.toLocaleString("ar-EG", {minimumFractionDigits: 2, maximumFractionDigits: 2});
+  }catch{
+    return x.toFixed(2);
+  }
+}
+function uid(prefix="id"){
+  return prefix + "_" + Math.random().toString(16).slice(2) + "_" + Date.now().toString(16);
+}
+
+/* ======= STORAGE ======= */
+function defaultDB(){
+  return {
+    meta: { version: VERSION, createdAt: new Date().toISOString() },
+    session: { userId: null },
+    users: [
+      { id:"u_admin", username:"admin", pass:"12345", role:"ADMIN", active:true, createdAt: new Date().toISOString() }
+    ],
+    accounts: [
+      { id:"a_cash", name:"الصندوق", kind:"CASH", active:true, createdAt: new Date().toISOString() },
+      { id:"a_voda", name:"فودافون كاش", kind:"WALLET", active:true, createdAt: new Date().toISOString() },
+      { id:"a_insta", name:"إنستا باي", kind:"ACCOUNT", active:true, createdAt: new Date().toISOString() }
+    ],
+    tx: [
+      // example
+      { id: uid("tx"), date: nowISO(), accountId:"a_cash", type:"IN", amount: 0, note:"", ref:"", createdAt: new Date().toISOString() }
+    ]
+  };
+}
+function loadDB(){
+  try{
+    const raw = localStorage.getItem(APP_KEY);
+    if(!raw) return defaultDB();
+    const db = JSON.parse(raw);
+    if(!db || !db.users || !db.accounts || !db.tx) return defaultDB();
+    /* MIGRATE */
+    for(const a of (db.accounts||[])) if(a.note === undefined) a.note = "";
+    return db;
+  }catch(e){
+    console.warn(e);
+    return defaultDB();
+  }
+}
+function saveDB(){
+  localStorage.setItem(APP_KEY, JSON.stringify(DB));
+}
+let DB = loadDB();
+
+/* ======= AUTH ======= */
+function currentUser(){
+  const uid = DB.session?.userId;
+  if(!uid) return null;
+  return DB.users.find(u => u.id === uid && u.active) || null;
+}
+function isAdmin(){
+  const u = currentUser();
+  return u && u.role === "ADMIN";
+}
+function login(username, pass){
+  const u = normalizeDigits(username).toLowerCase();
+  const p = normalizeDigits(pass);
+  const user = DB.users.find(x => x.active && x.username.toLowerCase() === u && normalizeDigits(x.pass) === p);
+  if(!user) return {ok:false, error:"بيانات الدخول غير صحيحة"};
+  DB.session.userId = user.id;
+  saveDB();
+  return {ok:true, user};
+}
+function logout(){
+  DB.session.userId = null;
+  saveDB();
+  boot();
+}
+
+/* ======= UI NAV ======= */
+const views = ["login","balances","transactions","accounts","users","import","settings"];
+function switchView(name){
+  if(!guardAdmin(name)) return;
+  for(const v of views){
+    const el = document.getElementById("view-"+v);
+    if(el) el.classList.toggle("hide", v !== name);
+  }
+  document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.view === name));
+  if(name === "balances") renderBalances();
+  if(name === "transactions") { fillAccountFilter(); renderTransactions(); }
+  if(name === "accounts") renderAccounts();
+  if(name === "users") renderUsers();
+  if(name === "import") prepareImportView();
+}
+
+document.getElementById("logoutBtn").addEventListener("click", logout);
+
+document.getElementById("nav").addEventListener("click", (e)=>{
+  const tab = e.target.closest(".tab");
+  if(!tab) return;
+  const view = tab.dataset.view;
+  if(view === "users" && !isAdmin()){
+    toast("غير مسموح", "صفحة المستخدمين للأدمن فقط");
+    return;
+  }
+  switchView(view);
+});
+
+/* ======= TOAST / MODAL ======= */
+let toastTimer = null;
+function toast(msg, hint=""){
+  const t = document.getElementById("toast");
+  document.getElementById("toastMsg").textContent = msg;
+  document.getElementById("toastHint").textContent = hint;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove("show"), 3500);
+}
+function hideToast(){ document.getElementById("toast").classList.remove("show"); }
+
+function openModal(title, bodyHTML){
+  document.getElementById("modalTitle").textContent = title;
+  document.getElementById("modalBody").innerHTML = bodyHTML;
+  document.getElementById("modal").classList.add("show");
+}
+function closeModal(){
+  document.getElementById("modal").classList.remove("show");
+}
+document.getElementById("modal").addEventListener("click", (e)=>{
+  if(e.target.id === "modal") closeModal();
+});
+
+/* ======= DATA HELPERS ======= */
+function activeAccounts(){
+  return DB.accounts.filter(a => a.active);
+}
+function accountById(id){
+  return DB.accounts.find(a => a.id === id) || null;
+}
+function computeBalances(){
+  const bal = {};
+  for(const a of DB.accounts){
+    bal[a.id] = 0;
+  }
+  for(const t of DB.tx){
+    const amt = Number(t.amount || 0);
+    if(!bal.hasOwnProperty(t.accountId)) bal[t.accountId] = 0;
+    if(String(t.type).toUpperCase() === "IN") bal[t.accountId] += amt;
+    else bal[t.accountId] -= amt;
+  }
+  return bal;
+}
+function txKindLabel(type){
+  const up = String(type).toUpperCase();
+  if(up === "IN") return "قبض";
+  return "صرف";
+}
+
+/* ======= BALANCES VIEW ======= */
+function renderBalances(){
+  const bal = computeBalances();
+  const kpis = document.getElementById("kpis");
+  kpis.innerHTML = "";
+
+  const accounts = activeAccounts();
+  const total = accounts.reduce((s,a)=> s + (bal[a.id]||0), 0);
+
+  const summary = [
+    {t:"إجمالي كل الحسابات", v: total, badge:"TOTAL"},
+    {t:"عدد الحسابات", v: accounts.length, badge:"ACCOUNTS"},
+    {t:"آخر تحديث", v: new Date().toLocaleDateString("ar-EG"), badge:"NOW"}
+  ];
+
+  for(const s of summary){
+    const div = document.createElement("div");
+    div.className = "kpi";
+    div.innerHTML = `
+      <div class="t">${s.t}</div>
+      <div class="v">${(s.badge==="ACCOUNTS")? s.v : (s.badge==="NOW")? '<small>'+s.v+'</small>' : money(s.v) + ' <small>ج.م</small>'}</div>
+    `;
+    kpis.appendChild(div);
+  }
+
+  const list = document.getElementById("balancesList");
+  list.innerHTML = "";
+  document.getElementById("balancesCount").textContent = accounts.length + " حساب";
+
+  accounts
+    .slice()
+    .sort((a,b)=> (bal[b.id]||0) - (bal[a.id]||0))
+    .forEach(a=>{
+      const b = bal[a.id] || 0;
+      const tag = a.kind === "CASH" ? "صندوق" : a.kind === "WALLET" ? "محفظة" : "حساب";
+      const el = document.createElement("div");
+      el.className = "item";
+      el.innerHTML = `
+        <div class="meta">
+          <div class="title">${escapeHtml(a.name)}</div>
+          <div class="small">${tag} • ${a.active ? "نشط" : "موقوف"}</div>
+        </div>
+        <div style="text-align:left; direction:ltr; display:flex; flex-direction:column; align-items:flex-start;">
+          <div style="font-weight:900; font-size:16px">${money(b)} <span class="muted" style="font-weight:800">EGP</span></div>
+          
+        </div>
+      `;
+      list.appendChild(el);
+    });
+}
+
+/* ======= TRANSACTIONS VIEW ======= */
+function fillAccountFilter(){
+  const sel = document.getElementById("fAccount");
+  const old = sel.value;
+  sel.innerHTML = `<option value="">كل الحسابات</option>` +
+    activeAccounts().map(a => `<option value="${a.id}">${escapeHtml(a.name)}</option>`).join("");
+  if(old) sel.value = old;
+}
+function resetFilters(){
+  document.getElementById("fAccount").value = "";
+  document.getElementById("fSearch").value = "";
+  document.getElementById("fFrom").value = "";
+  document.getElementById("fTo").value = "";
+  renderTransactions();
+}
+function renderTransactions(){
+  const a = document.getElementById("fAccount").value;
+  const q = normalizeDigits(document.getElementById("fSearch").value).toLowerCase();
+  const from = document.getElementById("fFrom").value;
+  const to = document.getElementById("fTo").value;
+
+  let rows = DB.tx.slice().filter(t=>{
+    if(a && t.accountId !== a) return false;
+    const d = String(t.date||"");
+    if(from && d < from) return false;
+    if(to && d > to) return false;
+    if(q){
+      const blob = [
+        t.id, t.date, t.type, t.amount,
+        accountById(t.accountId)?.name || "",
+        t.note || "", t.ref || ""
+      ].join(" ").toLowerCase();
+      if(!blob.includes(q)) return false;
+    }
+    return true;
+  });
+
+  // totals for current filters
+  let totalIn = 0, totalOut = 0;
+  for(const t of rows){
+    const amt = Number(t.amount || 0);
+    if(String(t.type).toUpperCase() === "IN") totalIn += amt;
+    else totalOut += amt;
+  }
+  const totalNet = totalIn - totalOut;
+  const elIn = document.getElementById("sumIn");
+  const elOut = document.getElementById("sumOut");
+  const elNet = document.getElementById("sumNet");
+  if(elIn) elIn.innerHTML = `${money(totalIn)} <small>ج.م</small>`;
+  if(elOut) elOut.innerHTML = `${money(totalOut)} <small>ج.م</small>`;
+  if(elNet) elNet.innerHTML = `${money(totalNet)} <small>ج.م</small>`;
+
+
+  rows.sort((x,y)=> (y.date||"").localeCompare(x.date||"") || (y.createdAt||"").localeCompare(x.createdAt||""));
+
+  document.getElementById("txCount").textContent = rows.length + " عملية";
+
+  const list = document.getElementById("txList");
+  list.innerHTML = "";
+
+  if(rows.length === 0){
+    const empty = document.createElement("div");
+    empty.className = "card center";
+    empty.innerHTML = `<div class="sub">لا توجد عمليات مطابقة للفلاتر.</div>`;
+    list.appendChild(empty);
+    return;
+  }
+
+  for(const t of rows){
+    const acc = accountById(t.accountId);
+    const kind = String(t.type).toUpperCase()==="IN" ? "in" : "out";
+    const tag = String(t.type).toUpperCase()==="IN" ? "قبض" : "صرف";
+    const amount = Number(t.amount||0);
+    const sign = kind==="in" ? "+" : "-";
+    const el = document.createElement("div");
+    el.className = "item";
+    el.innerHTML = `
+      <div class="meta">
+        <div class="title">${escapeHtml(acc ? acc.name : "حساب غير معروف")}</div>
+        <div class="small">${escapeHtml(t.date||"")} • <span class="tag ${kind}">${tag}</span> ${t.ref ? `<span class="tag note"># ${escapeHtml(t.ref)}</span>` : ""}</div>
+        ${t.note ? `<div class="small">${escapeHtml(t.note)}</div>` : ""}
+      </div>
+      <div style="text-align:left; direction:ltr; min-width:120px">
+        <div style="font-weight:900; font-size:16px">${sign}${money(amount)} <span class="muted" style="font-weight:800">EGP</span></div>
+        <div class="row" style="justify-content:flex-end; margin-top:8px; gap:8px">
+          <button class="btn small" onclick="openEditTx('${t.id}')">تعديل</button>
+          <button class="btn small danger" onclick="deleteTx('${t.id}')">حذف</button>
+        </div>
+      </div>
+    `;
+    list.appendChild(el);
+  }
+}
+
+/* ======= ACCOUNTS VIEW ======= */
+function renderAccounts(){
+  const list = document.getElementById("accountsList");
+  list.innerHTML = "";
+  const bal = computeBalances();
+
+  const accounts = DB.accounts.slice().sort((a,b)=> (a.active===b.active? 0 : a.active? -1: 1));
+  if(accounts.length === 0){
+    list.innerHTML = `<div class="hintbox">لا توجد حسابات.</div>`;
+    return;
+  }
+  for(const a of accounts){
+    const tag = a.kind === "CASH" ? "صندوق" : a.kind === "WALLET" ? "محفظة" : "حساب";
+    const used = DB.tx.some(t => t.accountId === a.id);
+    const el = document.createElement("div");
+    el.className = "item";
+    el.innerHTML = `
+      <div class="meta">
+        <div class="title">${escapeHtml(a.name)} ${a.active? "" : `<span class="tag out">موقوف</span>`}</div>
+        <div class="small">${tag} • الرصيد: <b>${money(bal[a.id]||0)}</b> ج.م</div>
+        <div class="small muted">ID: ${a.id}</div>
+      </div>
+      <div class="row" style="justify-content:flex-end">
+        <button class="btn small" onclick="openEditAccount('${a.id}')">تعديل</button>
+        <button class="btn small" onclick="toggleAccount('${a.id}')">${a.active? "إيقاف" : "تفعيل"}</button>
+        <button class="btn small danger" ${used? "disabled title='لا يمكن حذف حساب به عمليات'":""} onclick="deleteAccount('${a.id}')">حذف</button>
+      </div>
+    `;
+    list.appendChild(el);
+  }
+}
+
+/* ======= USERS VIEW ======= */
+function renderUsers(){
+  if(!isAdmin()){
+    toast("غير مسموح", "هذه الصفحة للأدمن فقط");
+    switchView("balances");
+    return;
+  }
+  const list = document.getElementById("usersList");
+  list.innerHTML = "";
+  const me = currentUser();
+
+  for(const u of DB.users){
+    const el = document.createElement("div");
+    el.className = "item";
+    el.innerHTML = `
+      <div class="meta">
+        <div class="title">${escapeHtml(u.username)} ${u.id===me.id? `<span class="tag note">أنت</span>`:""} ${u.active? "" : `<span class="tag out">موقوف</span>`}</div>
+        <div class="small">${u.role} • تم الإنشاء: ${new Date(u.createdAt).toLocaleDateString("ar-EG")}</div>
+      </div>
+      <div class="row" style="justify-content:flex-end">
+        <button class="btn small" onclick="openEditUser('${u.id}')">تعديل</button>
+        <button class="btn small" ${u.id===me.id? "disabled title='لا يمكنك إيقاف نفسك'":""} onclick="toggleUser('${u.id}')">${u.active? "إيقاف" : "تفعيل"}</button>
+      </div>
+    `;
+    list.appendChild(el);
+  }
+}
+
+/* ======= MODALS: ADD/EDIT ======= */
+function openAddTx(){
+  const options = activeAccounts().map(a => `<option value="${a.id}">${escapeHtml(a.name)}</option>`).join("");
+  openModal("إضافة عملية", `
+    <div class="grid">
+      <div>
+        <div class="label">التاريخ</div>
+        <input class="input" id="tx_date" type="date" value="${nowISO()}">
+      </div>
+      <div>
+        <div class="label">الحساب</div>
+        <select id="tx_account">${options}</select>
+      </div>
+      <div class="grid two">
+        <div>
+          <div class="label">النوع</div>
+          <select id="tx_type">
+            <option value="IN">قبض (IN)</option>
+            <option value="OUT">صرف (OUT)</option>
+          </select>
+        </div>
+        <div>
+          <div class="label">المبلغ</div>
+          <input class="input" id="tx_amount" inputmode="decimal" placeholder="0">
+        </div>
+      </div>
+      <div class="grid two">
+        <div>
+          <div class="label">مرجع (اختياري)</div>
+          <input class="input" id="tx_ref" placeholder="مثال: فاتورة 15">
+        </div>
+        <div>
+          <div class="label">وصف (اختياري)</div>
+          <input class="input" id="tx_note" placeholder="مثال: سداد / شراء خامات ...">
+        </div>
+      </div>
+
+      <button class="btn primary wide" onclick="addTx()">حفظ العملية</button>
+    </div>
+  `);
+}
+
+function parseAmount(val){
+  const s = normalizeDigits(val).replace(/[,،]/g,"").trim();
+  const n = Number(s);
+  return Number.isFinite(n) ? n : NaN;
+}
+function addTx(){
+  const date = document.getElementById("tx_date").value;
+  const accountId = document.getElementById("tx_account").value;
+  const type = document.getElementById("tx_type").value;
+  const amount = parseAmount(document.getElementById("tx_amount").value);
+  const ref = normalizeDigits(document.getElementById("tx_ref").value).trim();
+  const note = normalizeDigits(document.getElementById("tx_note").value).trim();
+
+  if(!date) return toast("خطأ", "اختر التاريخ");
+  if(!accountId) return toast("خطأ", "اختر الحساب");
+  if(!Number.isFinite(amount) || amount <= 0) return toast("خطأ", "اكتب مبلغ صحيح أكبر من 0");
+
+  DB.tx.push({ id: uid("tx"), date, accountId, type: String(type).toUpperCase(), amount, ref, note, createdAt: new Date().toISOString() });
+  saveDB();
+  closeModal();
+  toast("تم الحفظ", "تمت إضافة العملية بنجاح");
+  renderBalances();
+  fillAccountFilter();
+  renderTransactions();
+}
+
+function openEditTx(id){
+  const t = DB.tx.find(x => x.id === id);
+  if(!t) return toast("خطأ", "لم يتم العثور على العملية");
+  const options = activeAccounts().map(a => `<option value="${a.id}" ${a.id===t.accountId?"selected":""}>${escapeHtml(a.name)}</option>`).join("");
+  openModal("تعديل عملية", `
+    <div class="grid">
+      <div>
+        <div class="label">التاريخ</div>
+        <input class="input" id="tx_date" type="date" value="${escapeAttr(t.date||"")}">
+      </div>
+      <div>
+        <div class="label">الحساب</div>
+        <select id="tx_account">${options}</select>
+      </div>
+      <div class="grid two">
+        <div>
+          <div class="label">النوع</div>
+          <select id="tx_type">
+            <option value="IN" ${String(t.type).toUpperCase()==="IN"?"selected":""}>قبض (IN)</option>
+            <option value="OUT" ${String(t.type).toUpperCase()==="OUT"?"selected":""}>صرف (OUT)</option>
+          </select>
+        </div>
+        <div>
+          <div class="label">المبلغ</div>
+          <input class="input" id="tx_amount" inputmode="decimal" value="${escapeAttr(t.amount)}">
+        </div>
+      </div>
+      <div class="grid two">
+        <div>
+          <div class="label">مرجع (اختياري)</div>
+          <input class="input" id="tx_ref" value="${escapeAttr(t.ref||"")}">
+        </div>
+        <div>
+          <div class="label">وصف (اختياري)</div>
+          <input class="input" id="tx_note" value="${escapeAttr(t.note||"")}">
+        </div>
+      </div>
+
+      <button class="btn primary wide" onclick="saveEditTx('${id}')">حفظ التعديل</button>
+    </div>
+  `);
+}
+
+function saveEditTx(id){
+  const t = DB.tx.find(x => x.id === id);
+  if(!t) return toast("خطأ", "لم يتم العثور على العملية");
+
+  const date = document.getElementById("tx_date").value;
+  const accountId = document.getElementById("tx_account").value;
+  const type = document.getElementById("tx_type").value;
+  const amount = parseAmount(document.getElementById("tx_amount").value);
+  const ref = normalizeDigits(document.getElementById("tx_ref").value).trim();
+  const note = normalizeDigits(document.getElementById("tx_note").value).trim();
+
+  if(!date) return toast("خطأ", "اختر التاريخ");
+  if(!accountId) return toast("خطأ", "اختر الحساب");
+  if(!Number.isFinite(amount) || amount <= 0) return toast("خطأ", "اكتب مبلغ صحيح أكبر من 0");
+
+  t.date = date;
+  t.accountId = accountId;
+  t.type = String(type).toUpperCase();
+  t.amount = amount;
+  t.ref = ref;
+  t.note = note;
+  saveDB();
+  closeModal();
+  toast("تم الحفظ", "تم تعديل العملية");
+  renderBalances();
+  fillAccountFilter();
+  renderTransactions();
+}
+
+function deleteTx(id){
+  const t = DB.tx.find(x => x.id === id);
+  if(!t) return;
+  openModal("تأكيد حذف", `
+    <div class="hintbox">
+      هل تريد حذف العملية؟ هذا الإجراء لا يمكن التراجع عنه.
+      <div style="margin-top:10px" class="mono">ID: ${escapeHtml(id)}</div>
+    </div>
+    <div class="sep"></div>
+    <div class="row">
+      <button class="btn danger" onclick="confirmDeleteTx('${id}')">نعم، احذف</button>
+      <button class="btn" onclick="closeModal()">إلغاء</button>
+    </div>
+  `);
+}
+function confirmDeleteTx(id){
+  DB.tx = DB.tx.filter(x => x.id !== id);
+  saveDB();
+  closeModal();
+  toast("تم الحذف", "تم حذف العملية");
+  renderBalances();
+  renderTransactions();
+}
+
+/* ======= ACCOUNTS MODALS ======= */
+function openAddAccount(){
+  openModal("إضافة حساب", `
+    <div class="grid">
+      <div>
+        <div class="label">اسم الحساب</div>
+        <input class="input" id="acc_name" placeholder="مثال: خزنة فرع 2">
+      </div>
+      <div>
+        <div class="label">ملاحظة (اختياري)</div>
+        <textarea class="input" id="acc_note" placeholder="مثال: رقم المحفظة / اسم البنك / تفاصيل..."></textarea>
+      </div>
+      <div>
+        <div class="label">النوع</div>
+        <select id="acc_kind">
+          <option value="CASH">صندوق</option>
+          <option value="WALLET">محفظة إلكترونية</option>
+          <option value="ACCOUNT">حساب</option>
+        </select>
+      </div>
+      <button class="btn primary wide" onclick="addAccount()">حفظ</button>
+    </div>
+  `);
+}
+function addAccount(){
+  const name = normalizeDigits(document.getElementById("acc_name").value).trim();
+  const kind = document.getElementById("acc_kind").value;
+  if(!name) return toast("خطأ", "اكتب اسم الحساب");
+  DB.accounts.push({ id: uid("a"), name, kind, active:true, createdAt: new Date().toISOString() });
+  saveDB();
+  closeModal();
+  toast("تم الحفظ", "تمت إضافة الحساب");
+  renderAccounts();
+  fillAccountFilter();
+  renderBalances();
+}
+function openEditAccount(id){
+  const a = DB.accounts.find(x => x.id === id);
+  if(!a) return;
+  openModal("تعديل حساب", `
+    <div class="grid">
+      <div>
+        <div class="label">اسم الحساب</div>
+        <input class="input" id="acc_name" value="${escapeAttr(a.name)}">
+      </div>
+      <div>
+        <div class="label">ملاحظة (اختياري)</div>
+        <textarea class="input" id="acc_note" placeholder="مثال: رقم المحفظة / اسم البنك / تفاصيل...">${escapeHtml(a.note||"")}</textarea>
+      </div>
+      <div>
+        <div class="label">النوع</div>
+        <select id="acc_kind">
+          <option value="CASH" ${a.kind==="CASH"?"selected":""}>صندوق</option>
+          <option value="WALLET" ${a.kind==="WALLET"?"selected":""}>محفظة إلكترونية</option>
+          <option value="ACCOUNT" ${a.kind==="ACCOUNT"?"selected":""}>حساب</option>
+        </select>
+      </div>
+      <button class="btn primary wide" onclick="saveAccount('${id}')">حفظ</button>
+    </div>
+  `);
+}
+function saveAccount(id){
+  const a = DB.accounts.find(x => x.id === id);
+  if(!a) return;
+  const name = normalizeDigits(document.getElementById("acc_name").value).trim();
+  const note = normalizeDigits(document.getElementById("acc_note").value).trim();
+  const kind = document.getElementById("acc_kind").value;
+  if(!name) return toast("خطأ", "اكتب اسم الحساب");
+  a.name = name;
+  a.kind = kind;
+  a.note = note;
+  saveDB();
+  closeModal();
+  toast("تم الحفظ", "تم تعديل الحساب");
+  renderAccounts();
+  fillAccountFilter();
+  renderBalances();
+}
+function toggleAccount(id){
+  const a = DB.accounts.find(x => x.id === id);
+  if(!a) return;
+  a.active = !a.active;
+  saveDB();
+  toast("تم", a.active ? "تم تفعيل الحساب" : "تم إيقاف الحساب");
+  renderAccounts();
+  fillAccountFilter();
+  renderBalances();
+}
+function deleteAccount(id){
+  const a = DB.accounts.find(x => x.id === id);
+  if(!a) return;
+  const used = DB.tx.some(t => t.accountId === id);
+  if(used) return toast("غير ممكن", "لا يمكن حذف حساب به عمليات");
+  openModal("تأكيد حذف حساب", `
+    <div class="hintbox">
+      هل تريد حذف الحساب <b>${escapeHtml(a.name)}</b>؟
+    </div>
+    <div class="sep"></div>
+    <div class="row">
+      <button class="btn danger" onclick="confirmDeleteAccount('${id}')">نعم، احذف</button>
+      <button class="btn" onclick="closeModal()">إلغاء</button>
+    </div>
+  `);
+}
+function confirmDeleteAccount(id){
+  DB.accounts = DB.accounts.filter(a => a.id !== id);
+  saveDB();
+  closeModal();
+  toast("تم الحذف", "تم حذف الحساب");
+  renderAccounts();
+  fillAccountFilter();
+  renderBalances();
+}
+
+/* ======= USERS MODALS ======= */
+function openAddUser(){
+  if(!isAdmin()) return toast("غير مسموح", "الأدمن فقط");
+  openModal("إضافة مستخدم", `
+    <div class="grid">
+      <div>
+        <div class="label">اسم المستخدم</div>
+        <input class="input" id="u_name" placeholder="مثال: ahmed">
+      </div>
+      <div>
+        <div class="label">كلمة السر</div>
+        <input class="input" id="u_pass" type="password" placeholder="مثال: 12345">
+      </div>
+      <div>
+        <div class="label">الصلاحية</div>
+        <select id="u_role">
+          <option value="USER">USER</option>
+          <option value="ADMIN">ADMIN</option>
+        </select>
+      </div>
+      <button class="btn primary wide" onclick="addUser()">حفظ</button>
+    </div>
+  `);
+}
+function addUser(){
+  const username = normalizeDigits(document.getElementById("u_name").value).trim().toLowerCase();
+  const pass = normalizeDigits(document.getElementById("u_pass").value).trim();
+  const role = document.getElementById("u_role").value;
+  if(!username) return toast("خطأ", "اكتب اسم المستخدم");
+  if(!pass) return toast("خطأ", "اكتب كلمة السر");
+  if(DB.users.some(u=>u.username.toLowerCase()===username)) return toast("خطأ", "اسم المستخدم موجود بالفعل");
+  DB.users.push({ id: uid("u"), username, pass, role, active:true, createdAt: new Date().toISOString() });
+  saveDB();
+  closeModal();
+  toast("تم الحفظ", "تمت إضافة المستخدم");
+  renderUsers();
+}
+function openEditUser(id){
+  if(!isAdmin()) return;
+  const u = DB.users.find(x => x.id === id);
+  if(!u) return;
+  openModal("تعديل مستخدم", `
+    <div class="grid">
+      <div>
+        <div class="label">اسم المستخدم</div>
+        <input class="input" id="u_name" value="${escapeAttr(u.username)}">
+      </div>
+      <div>
+        <div class="label">كلمة السر</div>
+        <input class="input" id="u_pass" type="text" value="${escapeAttr(u.pass)}">
+        <div class="sub" style="margin-top:6px">ملاحظة: هذا تطبيق محلي — كلمة السر تُحفظ كما هي على الجهاز.</div>
+      </div>
+      <div>
+        <div class="label">الصلاحية</div>
+        <select id="u_role">
+          <option value="USER" ${u.role==="USER"?"selected":""}>USER</option>
+          <option value="ADMIN" ${u.role==="ADMIN"?"selected":""}>ADMIN</option>
+        </select>
+      </div>
+      <button class="btn primary wide" onclick="saveUser('${id}')">حفظ</button>
+    </div>
+  `);
+}
+function saveUser(id){
+  const u = DB.users.find(x => x.id === id);
+  if(!u) return;
+  const username = normalizeDigits(document.getElementById("u_name").value).trim().toLowerCase();
+  const pass = normalizeDigits(document.getElementById("u_pass").value).trim();
+  const role = document.getElementById("u_role").value;
+  if(!username) return toast("خطأ", "اكتب اسم المستخدم");
+  if(!pass) return toast("خطأ", "اكتب كلمة السر");
+  if(DB.users.some(x=>x.id!==id && x.username.toLowerCase()===username)) return toast("خطأ", "اسم المستخدم موجود بالفعل");
+  u.username = username;
+  u.pass = pass;
+  u.role = role;
+  saveDB();
+  closeModal();
+  toast("تم الحفظ", "تم تعديل المستخدم");
+  renderUsers();
+}
+function toggleUser(id){
+  if(!isAdmin()) return;
+  const me = currentUser();
+  if(me && me.id === id) return toast("غير ممكن", "لا يمكنك إيقاف نفسك");
+  const u = DB.users.find(x => x.id === id);
+  if(!u) return;
+  u.active = !u.active;
+  saveDB();
+  toast("تم", u.active ? "تم تفعيل المستخدم" : "تم إيقاف المستخدم");
+  renderUsers();
+}
+
+/* ======= IMPORT EXCEL ======= */
+let XLSX_WORKBOOK = null;
+
+function prepareImportView(){
+  const file = document.getElementById("xlsxFile");
+  const sheetSel = document.getElementById("xlsxSheet");
+  const btn = document.getElementById("importBtn");
+  sheetSel.innerHTML = `<option value="">— اختر بعد رفع الملف —</option>`;
+  btn.disabled = true;
+  document.getElementById("importInfo").textContent = "جاهز";
+  file.value = "";
+  XLSX_WORKBOOK = null;
+}
+
+document.getElementById("xlsxFile").addEventListener("change", async (e)=>{
+  const f = e.target.files?.[0];
+  const sheetSel = document.getElementById("xlsxSheet");
+  const btn = document.getElementById("importBtn");
+  if(!f){ sheetSel.innerHTML = `<option value="">— اختر بعد رفع الملف —</option>`; btn.disabled = true; return; }
+
+  try{
+    const data = await f.arrayBuffer();
+    XLSX_WORKBOOK = XLSX.read(data, {type:"array"});
+    const names = XLSX_WORKBOOK.SheetNames || [];
+    sheetSel.innerHTML = names.map(n => `<option value="${escapeAttr(n)}">${escapeHtml(n)}</option>`).join("");
+    btn.disabled = names.length === 0;
+    document.getElementById("importInfo").textContent = "تم تحميل الملف";
+  }catch(err){
+    console.error(err);
+    toast("فشل", "تعذر قراءة ملف Excel");
+    XLSX_WORKBOOK = null;
+    btn.disabled = true;
+  }
+});
+
+document.getElementById("importBtn").addEventListener("click", ()=>{
+  const sheetName = document.getElementById("xlsxSheet").value;
+  if(!XLSX_WORKBOOK || !sheetName) return toast("خطأ", "اختر ورقة العمل");
+  const ws = XLSX_WORKBOOK.Sheets[sheetName];
+  if(!ws) return toast("خطأ", "ورقة غير موجودة");
+
+  const rows = XLSX.utils.sheet_to_json(ws, {defval:""});
+  if(rows.length === 0) return toast("تنبيه", "لا توجد بيانات في الورقة");
+
+  const mapKey = (k)=> normalizeDigits(String(k)).trim().toLowerCase();
+  const get = (obj, keys)=>{
+    for(const k of keys){
+      const v = obj[k];
+      if(v !== undefined && v !== null && String(v).trim() !== "") return v;
+    }
+    return "";
+  };
+
+  let addedTx = 0, addedAcc = 0, skipped = 0;
+
+  for(const r of rows){
+    // Build normalized object by lowering keys
+    const nr = {};
+    for(const [k,v] of Object.entries(r)){
+      nr[mapKey(k)] = v;
+    }
+
+    let date = get(nr, ["date","التاريخ"]);
+    let accountName = String(get(nr, ["account","الحساب","اسم الحساب"])).trim();
+    let type = String(get(nr, ["type","النوع"])).trim();
+    let amountVal = get(nr, ["amount","المبلغ"]);
+    let note = String(get(nr, ["note","الوصف","ملاحظة"])).trim();
+    let ref = String(get(nr, ["ref","المرجع","رقم"])).trim();
+
+    // date can be Excel date number
+    date = excelDateToISO(date);
+    if(!date || !accountName || !amountVal){
+      skipped++;
+      continue;
+    }
+
+    type = normalizeType(type);
+    const amount = parseAmount(amountVal);
+    if(!Number.isFinite(amount) || amount<=0){ skipped++; continue; }
+
+    // find or create account by name
+    let acc = DB.accounts.find(a => a.name.trim() === accountName);
+    if(!acc){
+      acc = { id: uid("a"), name: accountName, kind:"ACCOUNT", active:true, createdAt: new Date().toISOString() };
+      DB.accounts.push(acc);
+      addedAcc++;
+    }
+
+    DB.tx.push({
+      id: uid("tx"),
+      date,
+      accountId: acc.id,
+      type,
+      amount,
+      note: normalizeDigits(note),
+      ref: normalizeDigits(ref),
+      createdAt: new Date().toISOString()
+    });
+    addedTx++;
+  }
+
+  saveDB();
+  toast("تم الاستيراد", `عمليات: ${addedTx} • حسابات: ${addedAcc} • تم تخطي: ${skipped}`);
+  renderBalances();
+  fillAccountFilter();
+  renderTransactions();
+});
+
+function normalizeType(t){
+  const s = normalizeDigits(String(t)).trim().toLowerCase();
+  if(["in","قبض","ايراد","إيراد","دخل","+","receive","received"].includes(s)) return "IN";
+  if(["out","صرف","مصروف","خصم","-","pay","paid"].includes(s)) return "OUT";
+  // if empty default IN
+  return (s.includes("out") || s.includes("صرف") || s.includes("مص")) ? "OUT" : "IN";
+}
+
+function excelDateToISO(v){
+  if(v == null) return "";
+  // already iso yyyy-mm-dd
+  const s = normalizeDigits(String(v)).trim();
+  if(/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+
+  // if JS Date string
+  const d1 = new Date(v);
+  if(!Number.isNaN(d1.getTime())){
+    const y = d1.getFullYear();
+    const m = String(d1.getMonth()+1).padStart(2,"0");
+    const d = String(d1.getDate()).padStart(2,"0");
+    return `${y}-${m}-${d}`;
+  }
+
+  // Excel serial date number
+  const n = Number(s);
+  if(Number.isFinite(n) && n > 20000 && n < 60000){
+    // Excel epoch 1899-12-30 (for Windows)
+    const epoch = new Date(Date.UTC(1899,11,30));
+    const ms = n * 24*60*60*1000;
+    const dt = new Date(epoch.getTime() + ms);
+    const y = dt.getUTCFullYear();
+    const m = String(dt.getUTCMonth()+1).padStart(2,"0");
+    const d = String(dt.getUTCDate()).padStart(2,"0");
+    return `${y}-${m}-${d}`;
+  }
+
+  // dd/mm/yyyy or dd-mm-yyyy
+  const m = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+  if(m){
+    const dd = String(m[1]).padStart(2,"0");
+    const mm = String(m[2]).padStart(2,"0");
+    const yy = m[3];
+    return `${yy}-${mm}-${dd}`;
+  }
+  return "";
+}
+
+function downloadTemplate(){
+  // create small xlsx template in browser using XLSX
+  const rows = [
+    {date: nowISO(), account: "الصندوق", type:"IN", amount: 1000, note:"إيراد", ref:""},
+    {date: nowISO(), account: "فودافون كاش", type:"OUT", amount: 250, note:"مصروف", ref:""}
+  ];
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Transactions");
+  const wbout = XLSX.write(wb, {bookType:"xlsx", type:"array"});
+  const blob = new Blob([wbout], {type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "VIP_Cashbook_Template.xlsx";
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+}
+
+/* ======= SETTINGS: BACKUP/RESTORE/WIPE ======= */
+function backupDownload(){
+  const blob = new Blob([JSON.stringify(DB, null, 2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "vip-cashbook-backup.json";
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+}
+
+document.getElementById("restoreFile").addEventListener("change", async (e)=>{
+  const f = e.target.files?.[0];
+  if(!f) return;
+  try{
+    const txt = await f.text();
+    const obj = JSON.parse(txt);
+    if(!obj || !obj.users || !obj.accounts || !obj.tx) throw new Error("Invalid backup");
+    DB = obj;
+    if(!DB.session) DB.session = {userId:null};
+    saveDB();
+    toast("تمت الاستعادة", "تم تحميل النسخة الاحتياطية");
+    boot();
+  }catch(err){
+    console.error(err);
+    toast("فشل", "الملف غير صالح");
+  }finally{
+    e.target.value = "";
+  }
+});
+
+function confirmWipe(){
+  openModal("مسح البيانات", `
+    <div class="hintbox danger-text">
+      تحذير: سيتم مسح كل البيانات (مستخدمين/حسابات/عمليات) من هذا الجهاز.
+    </div>
+    <div class="sep"></div>
+    <div class="row">
+      <button class="btn danger" onclick="wipeAll()">نعم، امسح</button>
+      <button class="btn" onclick="closeModal()">إلغاء</button>
+    </div>
+  `);
+}
+function wipeAll(){
+  localStorage.removeItem(APP_KEY);
+  DB = defaultDB();
+  saveDB();
+  closeModal();
+  toast("تم", "تم مسح البيانات وإعادة الضبط");
+  boot();
+}
+
+/* ======= EXPORT JSON (quick) ======= */
+function exportJson(){
+  backupDownload();
+}
+
+/* ======= SECURITY HELPERS (basic) ======= */
+function escapeHtml(str){
+  return String(str ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#39;");
+}
+function escapeAttr(str){
+  return escapeHtml(str).replaceAll("\n"," ");
+}
+
+
+/* ======= PRINT (Arabic-friendly PDF via browser print) ======= */
+function openPrintWindow(title, htmlBody){
+  const w = window.open("", "_blank");
+  if(!w){ toast("تنبيه","اسمح بالنوافذ المنبثقة للطباعة"); return; }
+  const css = `
+    <style>
+      @page{ size:A4; margin:14mm; }
+      body{
+      overflow-x:hidden; font-family: Arial, "Cairo", system-ui; direction:rtl; color:#111; }
+      h1{ margin:0 0 10px 0; font-size:18px; }
+      .meta{ font-size:12px; color:#444; margin-bottom:10px; }
+      .cards{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px; }
+      .card{ border:1px solid #ddd; border-radius:10px; padding:10px; }
+      .card .t{ font-size:12px; color:#555; margin-bottom:6px; }
+      .card .v{ font-size:18px; font-weight:800; }
+      table{ width:100%; border-collapse:collapse; font-size:12px; }
+      th,td{ border:1px solid #ddd; padding:8px; text-align:right; vertical-align:top; }
+      th{ background:#f3f4f6; }
+      .tag{ display:inline-block; padding:2px 8px; border-radius:999px; border:1px solid #ddd; font-weight:700; font-size:11px; }
+      .in{ background:#ecfdf5; border-color:#a7f3d0; }
+      .out{ background:#fef2f2; border-color:#fecaca; }
+      .foot{ margin-top:12px; font-size:11px; color:#666; }
+      @media print{ .no-print{ display:none } }
+    </style>
+  `;
+  w.document.open();
+  w.document.write(`<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>${title}</title>${css}</head><body>${htmlBody}</body></html>`);
+  w.document.close();
+  setTimeout(()=>{ w.focus(); w.print(); }, 450);
+}
+
+function printBalances(){
+  const bal = computeBalances();
+  const ac = activeAccounts().slice().sort((a,b)=>(bal[b.id]||0)-(bal[a.id]||0));
+  const total = ac.reduce((s,a)=>s+(bal[a.id]||0),0);
+  const meta = `تاريخ التقرير: ${new Date().toLocaleDateString("ar-EG")}`;
+  const rows = ac.map(a=>{
+    const kind = a.kind==="CASH"?"صندوق":a.kind==="WALLET"?"محفظة":"حساب";
+    return `<tr><td>${escapeHtml(a.name)}</td><td>${kind}</td><td style="direction:ltr;text-align:left">${money(bal[a.id]||0)} EGP</td></tr>`;
+  }).join("");
+  const body = `
+    <h1>ملخص الأرصدة</h1>
+    <div class="meta">${meta}</div>
+    <div class="cards">
+      <div class="card"><div class="t">إجمالي كل الحسابات</div><div class="v" style="direction:ltr;text-align:left">${money(total)} EGP</div></div>
+      <div class="card"><div class="t">عدد الحسابات</div><div class="v">${ac.length}</div></div>
+    </div>
+    <table>
+      <thead><tr><th>الحساب</th><th>النوع</th><th>الرصيد</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div class="foot">VIP Cashbook</div>
+  `;
+  openPrintWindow("Balances", body);
+}
+
+function printTransactions(){
+  const a = document.getElementById("fAccount").value;
+  const q = normalizeDigits(document.getElementById("fSearch").value).toLowerCase();
+  const from = document.getElementById("fFrom").value;
+  const to = document.getElementById("fTo").value;
+
+  let rows = DB.tx.slice().filter(t=>{
+    if(a && t.accountId !== a) return false;
+    const d = String(t.date||"");
+    if(from && d < from) return false;
+    if(to && d > to) return false;
+    if(q){
+      const blob = [t.id,t.date,t.type,t.amount,accountById(t.accountId)?.name||"",t.note||"",t.ref||""].join(" ").toLowerCase();
+      if(!blob.includes(q)) return false;
+    }
+    return true;
+  });
+  rows.sort((x,y)=> (y.date||"").localeCompare(x.date||"") || (y.createdAt||"").localeCompare(x.createdAt||""));
+
+  let totalIn=0,totalOut=0;
+  for(const t of rows){
+    const amt = Number(t.amount||0);
+    if(String(t.type).toUpperCase()==="IN") totalIn += amt; else totalOut += amt;
+  }
+  const totalNet = totalIn-totalOut;
+
+  const metaParts = [];
+  metaParts.push(`تاريخ التقرير: ${new Date().toLocaleDateString("ar-EG")}`);
+  if(a) metaParts.push(`الحساب: ${escapeHtml(accountById(a)?.name||"")}`);
+  if(from) metaParts.push(`من: ${escapeHtml(from)}`);
+  if(to) metaParts.push(`إلى: ${escapeHtml(to)}`);
+  if(q) metaParts.push(`بحث: ${escapeHtml(q)}`);
+
+  const meta = metaParts.join(" • ");
+
+  const bodyRows = rows.map(t=>{
+    const acc = accountById(t.accountId)?.name||"";
+    const typ = String(t.type).toUpperCase()==="IN" ? `<span class="tag in">قبض</span>` : `<span class="tag out">صرف</span>`;
+    return `<tr>
+      <td>${escapeHtml(t.date||"")}</td>
+      <td>${escapeHtml(acc)}</td>
+      <td>${typ}</td>
+      <td style="direction:ltr;text-align:left">${money(t.amount)} EGP</td>
+      <td>${escapeHtml(t.ref||"")}</td>
+      <td>${escapeHtml(t.note||"")}</td>
+    </tr>`;
+  }).join("");
+
+  const body = `
+    <h1>تقرير العمليات</h1>
+    <div class="meta">${meta}</div>
+    <div class="cards">
+      <div class="card"><div class="t">إجمالي المقبوضات</div><div class="v" style="direction:ltr;text-align:left">${money(totalIn)} EGP</div></div>
+      <div class="card"><div class="t">إجمالي المدفوعات</div><div class="v" style="direction:ltr;text-align:left">${money(totalOut)} EGP</div></div>
+      <div class="card"><div class="t">الرصيد (صافي)</div><div class="v" style="direction:ltr;text-align:left">${money(totalNet)} EGP</div></div>
+      <div class="card"><div class="t">عدد العمليات</div><div class="v">${rows.length}</div></div>
+    </div>
+    <table>
+      <thead><tr><th>التاريخ</th><th>الحساب</th><th>النوع</th><th>المبلغ</th><th>مرجع</th><th>وصف</th></tr></thead>
+      <tbody>${bodyRows}</tbody>
+    </table>
+    <div class="foot">VIP Cashbook</div>
+  `;
+  openPrintWindow("Transactions", body);
+}
+
+
+/* ======= BOOT ======= */
+document.getElementById("loginBtn").addEventListener("click", ()=>{
+  const u = document.getElementById("loginUser").value;
+  const p = document.getElementById("loginPass").value;
+  const res = login(u,p);
+  if(!res.ok){
+    toast("فشل الدخول", res.error);
+    return;
+  }
+  toast("مرحباً", "تم تسجيل الدخول");
+  boot();
+});
+document.getElementById("loginPass").addEventListener("keydown", (e)=>{
+  if(e.key === "Enter") document.getElementById("loginBtn").click();
+});
+
+function boot(){
+  DB = loadDB();
+  const u = currentUser();
+
+  const nav = document.getElementById("nav");
+  const topbar = document.getElementById("topbar");
+  const userPill = document.getElementById("userPill");
+  const logoutBtn = document.getElementById("logoutBtn");
+  const usersTab = document.getElementById("usersTab");
+
+  if(!u){
+    nav.style.display = "none";
+    userPill.style.display = "none";
+    logoutBtn.style.display = "none";
+    usersTab.style.display = "none";
+    document.getElementById("subtitle").textContent = "Mobile App (PWA)";
+    switchView("login");
+    return;
+  }
+
+  // logged in
+  nav.style.display = "flex";
+  userPill.style.display = "flex";
+  logoutBtn.style.display = "inline-flex";
+  usersTab.style.display = isAdmin() ? "inline-flex" : "none";
+  const st = document.getElementById('settingsTab'); if(st) st.style.display = isAdmin() ? 'inline-flex' : 'none';
+
+  document.getElementById("userName").textContent = u.username;
+  document.getElementById("userRole").textContent = u.role;
+
+  document.getElementById("subtitle").textContent = "جاهز للعمل • " + new Date().toLocaleDateString("ar-EG");
+
+  // default view
+  switchView("balances");
+}
+
+// initial
+boot();
+
+/* ======= ADMIN GUARDS ======= */
+function guardAdmin(view){
+  if(view === "settings" && !isAdmin()){
+    toast("غير مسموح", "صفحة الإعدادات للأدمن فقط");
+    return false;
+  }
+  return true;
+}
+
+
+
+
+/* ======= FULLSCREEN ======= */
+function tryFullscreen(){
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+  if(isStandalone){
+    const el = document.documentElement;
+    if(el.requestFullscreen) el.requestFullscreen().catch(()=>{});
+  }
+}
+window.addEventListener('load', ()=> setTimeout(tryFullscreen, 800));
+
+</script>
+</body>
+</html>
